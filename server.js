@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const app = express();
 const port = 3000;
 
-const mongoURI = 'mongodb://localhost:27017/testDB';
+const mongoURI = 'mongodb+srv://khandelwalg578:pQA4raESYbAGecNM@cluster0.y8ouhdk.mongodb.net/?retryWrites=true&w=majority';
 
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
