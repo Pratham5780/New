@@ -13,7 +13,7 @@
         <div class="header">
             <img src="https://digigrowhub.in/wp-content/uploads/2021/10/digi-new.png" alt="">
             <h1>DigiGrowHub Management Portal</h1>
-            <button id="addButton">Add Event</button>
+            <button id="addButton">Add Class</button>
         </div>
     </div>
     <div id="formContainer" style="display: none;">
@@ -92,6 +92,7 @@
 
     <div id="eventTableContainer">
         <h2>Event List</h2>
+        <input type="text" id="searchInput" placeholder="Search by Trainer Name">
         <table id="eventTable">
             <thead>
                 <tr>
@@ -174,7 +175,6 @@
 
         function createEditButton(event) {
             const editButton = document.createElement('button');
-            // editButton.classList.add('green-button');
             editButton.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
             editButton.addEventListener('click', () => openEditForm(event));
             return editButton;
@@ -211,7 +211,6 @@
             return deleteButton;
         }
 
-
         async function validatePassword(password) {
             try {
                 const response = await fetch("/password", {
@@ -234,7 +233,6 @@
                 return false;
             }
         }
-
 
         async function openEditForm(event) {
             const password = prompt("Enter password:");
@@ -307,16 +305,61 @@
                 alert("Invalid password. Access denied.");
             }
         }
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            filterAndDisplayEvents(searchTerm);
+        });
+
+        async function filterAndDisplayEvents(searchTerm) {
+            const response = await fetch('/events');
+            const eventData = await response.json();
+
+            const filteredEvents = eventData.filter(event =>
+                event.trainerName.toLowerCase().includes(searchTerm)
+            );
+
+            eventTableBody.innerHTML = ''; // Clear the existing table rows
+
+            filteredEvents.forEach((event, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${event.courseName}</td>
+            <td>${event.trainerName}</td>
+            <td>${format12HourTime(event.startTime)}</td>
+            <td>${format12HourTime(event.endTime)}</td>
+            <td>${event.duration}</td>
+            <td>${formatDate(event.startDate)}</td>
+            <td>${formatDate(event.endDate)}</td>
+            <td><a href="${event.syllabusLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
+            <td><a href="${event.meetingLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
+            <td><a href="${event.studentInfoLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
+            <td></td>
+        `;
+
+                const editButtonCell = row.querySelector('td:last-child');
+                const editButton = createEditButton(event);
+                const deleteButton = createDeleteButton(event);
+                editButtonCell.appendChild(editButton);
+                editButtonCell.appendChild(deleteButton);
+
+                eventTableBody.appendChild(row);
+            });
+        }
+
         function isTimeInRange(time, startTime, endTime) {
             const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
             return currentTime >= startTime && currentTime <= endTime;
         }
+
         function convertTo24HourFormat(time12) {
             const [time, period] = time12.split(" ");
             const [hour, minute] = time.split(":");
             const hour24 = period === "PM" ? parseInt(hour) + 12 : parseInt(hour);
             return `${hour24.toString().padStart(2, "0")}:${minute}`;
         }
+
         // Function to update row colors based on time range
         function updateRowColors() {
             const rows = document.querySelectorAll('#eventTableBody tr');
@@ -333,6 +376,7 @@
                 }
             });
         }
+
         function format12HourTime(time24) {
             const [hour, minute] = time24.split(":");
             const parsedHour = parseInt(hour);
@@ -347,7 +391,6 @@
             return new Date(date).toLocaleDateString('en-GB', options);
         }
 
-
         // Load events and update row colors
         async function loadEvents() {
             eventTableBody.innerHTML = '';
@@ -359,19 +402,19 @@
                 eventData.forEach((event, index) => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${event.courseName}</td>
-                <td>${event.trainerName}</td>
-                <td>${format12HourTime(event.startTime)}</td>
-                <td>${format12HourTime(event.endTime)}</td>
-                <td>${event.duration}</td>
-                <td>${formatDate(event.startDate)}</td>
-                <td>${formatDate(event.endDate)}</td>
-                <td><a href="${event.syllabusLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
-                <td><a href="${event.meetingLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
-                <td><a href="${event.studentInfoLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
-                <td></td>
-            `;
+            <td>${index + 1}</td>
+            <td>${event.courseName}</td>
+            <td>${event.trainerName}</td>
+            <td>${format12HourTime(event.startTime)}</td>
+            <td>${format12HourTime(event.endTime)}</td>
+            <td>${event.duration}</td>
+            <td>${formatDate(event.startDate)}</td>
+            <td>${formatDate(event.endDate)}</td>
+            <td><a href="${event.syllabusLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
+            <td><a href="${event.meetingLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
+            <td><a href="${event.studentInfoLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
+            <td></td>
+        `;
 
                     const editButtonCell = row.querySelector('td:last-child');
                     const editButton = createEditButton(event);
@@ -395,6 +438,7 @@
         loadEvents();
 
     </script>
+
 </body>
 
 </html>

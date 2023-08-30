@@ -129,3 +129,10 @@ button:hover{
 .tab:hover{
     color: #002fa7;
 }
+#searchInput{
+    padding: 5px 10px;
+    margin-left: 245px;
+    font-size: 12px;
+    border-radius: 5px;
+    border: 2px solid #002fa7
+}
