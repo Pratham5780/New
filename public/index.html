@@ -270,21 +270,42 @@
             const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
             return currentTime >= startTime && currentTime <= endTime;
         }
-
+        function convertTo24HourFormat(time12) {
+            const [time, period] = time12.split(" ");
+            const [hour, minute] = time.split(":");
+            const hour24 = period === "PM" ? parseInt(hour) + 12 : parseInt(hour);
+            return `${hour24.toString().padStart(2, "0")}:${minute}`;
+        }
         // Function to update row colors based on time range
         function updateRowColors() {
             const rows = document.querySelectorAll('#eventTableBody tr');
             rows.forEach(row => {
                 const startTime = row.cells[3].textContent;
                 const endTime = row.cells[4].textContent;
+                const formattedStartTime = convertTo24HourFormat(startTime);
+                const formattedEndTime = convertTo24HourFormat(endTime);
 
-                if (isTimeInRange(new Date(), startTime, endTime)) {
+                if (isTimeInRange(new Date(), formattedStartTime, formattedEndTime)) {
                     row.classList.add('active-event');
                 } else {
                     row.classList.remove('active-event');
                 }
             });
         }
+        function format12HourTime(time24) {
+            const [hour, minute] = time24.split(":");
+            const parsedHour = parseInt(hour);
+            const period = parsedHour >= 12 ? "PM" : "AM";
+            const formattedHour = parsedHour % 12 === 0 ? 12 : parsedHour % 12;
+
+            return `${formattedHour}:${minute} ${period}`;
+        }
+
+        function formatDate(date) {
+            const options = { year: '2-digit', month: '2-digit', day: '2-digit' };
+            return new Date(date).toLocaleDateString('en-GB', options);
+        }
+
 
         // Load events and update row colors
         async function loadEvents() {
@@ -300,11 +321,11 @@
                 <td>${index + 1}</td>
                 <td>${event.courseName}</td>
                 <td>${event.trainerName}</td>
-                <td>${event.startTime}</td>
-                <td>${event.endTime}</td>
+                <td>${format12HourTime(event.startTime)}</td>
+                <td>${format12HourTime(event.endTime)}</td>
                 <td>${event.duration}</td>
-                <td>${event.startDate}</td>
-                <td>${event.endDate}</td>
+                <td>${formatDate(event.startDate)}</td>
+                <td>${formatDate(event.endDate)}</td>
                 <td><a href="${event.syllabusLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
                 <td><a href="${event.meetingLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
                 <td><a href="${event.studentInfoLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
