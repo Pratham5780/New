@@ -171,12 +171,13 @@
                     if (response.ok) {
                         loadEvents();
                     } else {
-                        console.error('Error deleting event.');
+                        console.error('Error deleting data.');
                     }
                 } catch (error) {
-                    console.error('An error occurred while deleting event.', error);
+                    console.error('An error occurred while deleting data.', error);
                 }
             });
+
             return deleteButton;
         }
 
