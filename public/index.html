@@ -9,9 +9,13 @@
 </head>
 
 <body>
-    <h1>Welcome to the Event Management Website</h1>
-    <button id="addButton">Add Event</button>
-
+    <div class="nav">
+        <div class="header">
+            <img src="https://digigrowhub.in/wp-content/uploads/2021/10/digi-new.png" alt="">
+            <h1>DigiHubGrow Management Portal</h1>
+            <button id="addButton">Add Event</button>
+        </div>
+    </div>
     <div id="formContainer" style="display: none;">
         <h2>Add New Event</h2>
         <form id="eventForm">
@@ -79,7 +83,7 @@
         <table id="eventTable">
             <thead>
                 <tr>
-                    <th>Serial Number</th>
+                    <th class="serial">Serial Number</th>
                     <th>Course Name</th>
                     <th>Duration</th>
                     <th>Start Time</th>
@@ -154,6 +158,7 @@
 
         function createEditButton(event) {
             const editButton = document.createElement('button');
+            editButton.classList.add('green-button');
             editButton.textContent = 'Edit';
             editButton.addEventListener('click', () => openEditForm(event));
             return editButton;
@@ -161,6 +166,7 @@
 
         function createDeleteButton(event) {
             const deleteButton = document.createElement('button');
+            deleteButton.classList.add('red-button');
             deleteButton.textContent = 'Delete';
             deleteButton.addEventListener('click', async () => {
                 try {

@@ -1,4 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@100;300;400;500;600&display=swap');
+*{
+    padding: 0;
+    margin: 0;
+    font-family: 'Kanit', sans-serif;
+}
 .active-event {
     background-color: green;
     color: white;
+}
+.header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 40px;
+    padding: 10px 0;
+    color: white;
+}
+.nav{
+    background-color: #002fa7;
+}
+.header img{
+    width: 150px;
+}
+#addButton{
+    padding: 5px 20px;
+    border-radius: 5px;
+    border: 0px;
+    background-color: #33b249;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+}
+#editFormContainer,
+#formContainer{
+    position: relative;
+    padding: 20px;
+    padding-left: 50px;
+    top: 50%;
+    margin-left: 40%;
+}
+#editFormContainer h2,
+#formContainer h2{
+    padding-bottom: 10px;
+}
+#editForm,
+#eventForm{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+#editForm input,
+#eventForm input{
+    width: 30%;
+}
+button{
+    padding: 5px 20px;
+    border-radius: 5px;
+    border: 0px;
+    background-color: #33b249;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s;
+}
+#eventTableContainer h2{
+    text-align: center;
+    padding: 10px;
+}
+#eventTable{
+    margin-left: auto;
+  margin-right: auto;
+}
+table {
+    border-collapse: collapse;
+    border-radius: 1em;
+    overflow: hidden;
+    box-shadow: 0px 10px 15px 5px grey;
+  }
+table, tr, td, th{
+    border: 1px solid #002fa7;
+    border-collapse: collapse;
+    font-size: 16px;
+    }
+thead{
+    background-color: #002fa7;
+    color: #fff;
+}
+th{
+    padding: 10px 15px;
+}
+td{
+    padding: 5px 30px;
+}
+td button{
+    margin: 0 5px; 
+}
+.red-button{
+    background-color: red;
+    color: white;
+    transition: 0.3s;
+}
+.red-button:hover{
+    background-color: #d11a2a;
+}
+.green-button{
+    background-color: #33b249;
+    color: white;
+    transition: 0.3s;
+}
+button:hover{
+    background-color: #37a36b;
 }
