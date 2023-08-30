@@ -5,6 +5,7 @@ const app = express();
 const port = 3000;
 
 const mongoURI = 'mongodb+srv://khandelwalg578:pQA4raESYbAGecNM@cluster0.y8ouhdk.mongodb.net/?retryWrites=true&w=majority';
+const MASTER_PASSWORD = "digi1grow"; 
 
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -93,6 +94,16 @@ app.delete('/delete/:id', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('An error occurred');
+    }
+});
+
+app.post("/password", (req, res) => {
+    const { password } = req.body;
+
+    if (password === MASTER_PASSWORD) {
+        res.status(200).json({ valid: true });
+    } else {
+        res.status(200).json({ valid: false });
     }
 });
 
