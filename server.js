@@ -75,6 +75,22 @@ app.patch('/edit/:id', async (req, res) => {
         res.status(500).send('An error occurred');
     }
 });
+app.delete('/delete/:id', async (req, res) => {
+    try {
+        const eventId = req.params.id;
+
+        const deletedEvent = await Event.findByIdAndDelete(eventId);
+        if (!deletedEvent) {
+            return res.status(404).send('Event not found');
+        }
+
+        const events = await Event.find().sort({ startTime: 1 });
+        res.status(200).json(events);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('An error occurred');
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
