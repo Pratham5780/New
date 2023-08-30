@@ -12,7 +12,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 0 40px;
+    margin: 0px 40px;
+    margin-bottom: 10px;
     padding: 10px 0;
     color: white;
 }
@@ -36,8 +37,12 @@
     position: relative;
     padding: 20px;
     padding-left: 50px;
-    top: 50%;
-    margin-left: 40%;
+    margin: 0 35%;
+background: rgba(0, 0, 0, 0.2);
+border-radius: 16px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(5px);
+-webkit-backdrop-filter: blur(5px);
 }
 #editFormContainer h2,
 #formContainer h2{
@@ -52,7 +57,7 @@
 }
 #editForm input,
 #eventForm input{
-    width: 30%;
+    width: 80%;
 }
 button{
     padding: 5px 20px;
@@ -77,6 +82,7 @@ table {
     border-radius: 1em;
     overflow: hidden;
     box-shadow: 0px 10px 15px 5px grey;
+    margin-bottom: 20px;
   }
 table, tr, td, th{
     border: 1px solid #002fa7;
@@ -111,4 +117,15 @@ td button{
 }
 button:hover{
     background-color: #37a36b;
+}
+.tab{
+    font-size: 20px;
+    color: black;
+    transition: 0.3s;
+}
+.tab-head{
+    font-size: 20px;
+}
+.tab:hover{
+    color: #002fa7;
 }

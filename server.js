@@ -9,6 +9,8 @@ const mongoURI = 'mongodb+srv://khandelwalg578:pQA4raESYbAGecNM@cluster0.y8ouhdk
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const eventSchema = new mongoose.Schema({
+    startDate: String,
+    endDate: String,
     courseName: String,
     duration: String,
     startTime: String,
@@ -39,6 +41,8 @@ app.post("/submit", async (req, res) => {
         const eventData = req.body;
 
         const newEvent = new Event({
+            startDate: eventData.startDate,
+            endDate: eventData.endDate,
             courseName: eventData.courseName,
             duration: eventData.duration,
             startTime: eventData.startTime,
