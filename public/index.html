@@ -13,7 +13,10 @@
         <div class="header">
             <img src="https://digigrowhub.in/wp-content/uploads/2021/10/digi-new.png" alt="">
             <h1>DigiGrowHub Management Portal</h1>
-            <button id="addButton">Add Class</button>
+            <div class="nav-btn">
+                <button id="addButton">Add Class</button>
+                <button id="traineePortalButton">Trainee Pannel</button>
+            </div>
         </div>
     </div>
     <div id="formContainer" style="display: none;">
@@ -122,6 +125,21 @@
         const editFormContainer = document.getElementById('editFormContainer');
         const eventForm = document.getElementById("eventForm");
         const eventTableBody = document.getElementById('eventTableBody');
+        const traineePortalButton = document.getElementById("traineePortalButton");
+
+
+        traineePortalButton.addEventListener("click", async function () {
+            const password = prompt("Enter password:");
+            if (password !== null) {
+                const isValidPassword = await validatePassword(password);
+                if (isValidPassword) {
+                    window.location.href = "index2.html"; // Redirect to the trainee portal page
+                }
+            }
+            else {
+                alert("Invalid password. Access denied.");
+            }
+        });
 
         addButton.addEventListener("click", function () {
             const isVisible = addButton.getAttribute("data-visible") === "true";

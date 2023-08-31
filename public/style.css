@@ -23,6 +23,11 @@
 .header img{
     width: 150px;
 }
+.nav-btn{
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+}
 #addButton{
     padding: 5px 20px;
     border-radius: 5px;
@@ -31,7 +36,12 @@
     font-size: 14px;
     color: #fff;
     cursor: pointer;
+    transition: 0.3s;
 }
+#addButton:hover{
+    background-color: #37a36b;
+}
+#traineeFormContainer,
 #editFormContainer,
 #formContainer{
     position: relative;
@@ -44,10 +54,12 @@ box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 backdrop-filter: blur(5px);
 -webkit-backdrop-filter: blur(5px);
 }
+#traineeFormContainer h2,
 #editFormContainer h2,
 #formContainer h2{
     padding-bottom: 10px;
 }
+#traineeForm,
 #editForm,
 #eventForm{
     display: flex;
@@ -55,6 +67,7 @@ backdrop-filter: blur(5px);
     align-items: flex-start;
     justify-content: center;
 }
+#traineeForm input,
 #editForm input,
 #eventForm input{
     width: 80%;
@@ -69,10 +82,12 @@ button{
     cursor: pointer;
     transition: 0.3s;
 }
+#traineeTableContainer h2,
 #eventTableContainer h2{
     text-align: center;
     padding: 10px;
 }
+#traineeTable,
 #eventTable{
     margin-left: auto;
   margin-right: auto;

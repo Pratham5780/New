@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trainee Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="nav">
+        <div class="header">
+            <img src="https://digigrowhub.in/wp-content/uploads/2021/10/digi-new.png" alt="">
+            <h1>Trainee Portal</h1>
+            <div class="nav-btn">
+                <button id="addTraineeButton">Add Trainee</button>
+                <button id="addButton">Management Pannel</button>
+            </div>
+        </div>
+    </div>
+    <div id="traineeFormContainer" style="display: none;">
+        <h2>Add New Trainee</h2>
+        <form id="traineeForm">
+            <label for="traineeName">Name:</label>
+            <input type="text" id="traineeName" name="traineeName" required><br>
+
+            <label for="traineeContact">Contact No.:</label>
+            <input type="text" id="traineeContact" name="traineeContact" required><br>
+
+            <label for="traineeSkills">Skills:</label>
+            <input type="text" id="traineeSkills" name="traineeSkills" required><br>
+
+            <label for="traineeLogin">Login ID:</label>
+            <input type="text" id="traineeLogin" name="traineeLogin" required><br>
+
+            <label for="traineePassword">Password:</label>
+            <input type="password" id="traineePassword" name="traineePassword" required><br>
+
+            <label for="traineePortfolio">Portfolio Link:</label>
+            <input type="url" id="traineePortfolio" name="traineePortfolio" required><br>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <div id="traineeTableContainer">
+        <h2>Trainee List</h2>
+        <table id="traineeTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Contact No.</th>
+                    <th>Skills</th>
+                    <th>Login ID</th>
+                    <th>Password</th>
+                    <th>Profile</th>
+                </tr>
+            </thead>
+            <tbody id="traineeTableBody">
+                <!-- Trainee data rows will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+    <script src="https://kit.fontawesome.com/a8cf255646.js" crossorigin="anonymous"></script>
+
+    <script>
+        const addTraineeButton = document.getElementById("addTraineeButton");
+        const traineeFormContainer = document.getElementById("traineeFormContainer");
+        const traineeForm = document.getElementById("traineeForm");
+        const traineeTableBody = document.getElementById("traineeTableBody");
+        const addButton = document.getElementById("addButton");
+
+        addButton.addEventListener("click", function () {
+            window.location.href = "index.html"; // Redirect to the trainee portal page
+        });
+
+        addTraineeButton.addEventListener("click", function () {
+            const isVisible = addTraineeButton.getAttribute("data-visible") === "true";
+            if (isVisible) {
+                traineeFormContainer.style.display = "none";
+                addTraineeButton.setAttribute("data-visible", "false");
+            } else {
+                traineeFormContainer.style.display = "block";
+                addTraineeButton.setAttribute("data-visible", "true");
+            }
+        });
+
+        traineeForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(traineeForm);
+            const formDataObject = {
+                traineeName: formData.get("traineeName"),
+                traineeContact: formData.get("traineeContact"),
+                traineeSkills: formData.get("traineeSkills"),
+                traineeLogin: formData.get("traineeLogin"),
+                traineePassword: formData.get("traineePassword"),
+                traineePortfolio: formData.get("traineePortfolio"),
+            };
+
+            try {
+                const response = await fetch("/submitTrainee", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formDataObject),
+                });
+
+                if (response.ok) {
+                    traineeFormContainer.style.display = "none";
+                    traineeForm.reset();
+                } else {
+                    console.error("Error submitting trainee data.");
+                }
+            } catch (error) {
+                console.error("An error occurred while submitting trainee data.", error);
+            }
+        });
+        async function loadTrainees() {
+            traineeTableBody.innerHTML = "";
+
+            try {
+                const response = await fetch("/trainees");
+                if (response.ok) {
+                    const traineeData = await response.json();
+
+                    traineeData.forEach((trainee) => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                    <td>${trainee.traineeName}</td>
+                    <td>${trainee.traineeContact}</td>
+                    <td>${trainee.traineeSkills}</td>
+                    <td>${trainee.traineeLogin}</td>
+                    <td>${trainee.traineePassword}</td>
+                    <td><a href="${trainee.traineePortfolio}" target="_blank"><i class="fa-solid tab fa-arrow-up-right-from-square"></i></i></a></td>
+                `;
+
+                        traineeTableBody.appendChild(row);
+                    });
+
+                    const traineeTableContainer = document.getElementById("traineeTableContainer");
+                    traineeTableContainer.style.display = "block";
+                } else {
+                    console.error("Error loading trainees:", response.statusText);
+                }
+            } catch (error) {
+                console.error("An error occurred while loading trainees:", error);
+            }
+        }
+
+
+        loadTrainees();
+    </script>
+
+    </script>
+</body>
+
+</html>

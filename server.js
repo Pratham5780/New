@@ -21,8 +21,18 @@ const eventSchema = new mongoose.Schema({
     meetingLink: String,
     studentInfoLink: String,
 });
+const traineeSchema = new mongoose.Schema({
+    traineeName: String,
+    traineeContact: String,
+    traineeSkills: String,
+    traineeLogin: String,
+    traineePassword: String,
+    traineePortfolio: String,
+});
 
 const Event = mongoose.model("StudentTrainee", eventSchema);
+const Trainee = mongoose.model("Trainee", traineeSchema);
+
 
 app.use(express.static("public"));
 app.use(express.json());
@@ -94,6 +104,46 @@ app.delete('/delete/:id', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('An error occurred');
+    }
+});
+
+app.post("/submitTrainee", async (req, res) => {
+    try {
+        const {
+            traineeName,
+            traineeContact,
+            traineeSkills,
+            traineeLogin,
+            traineePassword,
+            traineePortfolio,
+        } = req.body;
+
+        // Create a new Trainee document
+        const newTrainee = new Trainee({
+            traineeName,
+            traineeContact,
+            traineeSkills,
+            traineeLogin,
+            traineePassword,
+            traineePortfolio,
+        });
+
+        // Save the new Trainee document to the database
+
+        res.status(200).send("Trainee data submitted successfully.");
+    } catch (error) {
+        console.error("Error submitting trainee data:", error);
+        res.status(500).send("An error occurred while submitting trainee data.");
+    }
+});
+
+app.get("/trainees", async (req, res) => {
+    try {
+        const trainees = await Trainee.find();
+        res.status(200).json(trainees);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("An error occurred");
     }
 });
 
