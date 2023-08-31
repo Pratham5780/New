@@ -24,10 +24,13 @@ const eventSchema = new mongoose.Schema({
 const traineeSchema = new mongoose.Schema({
     traineeName: String,
     traineeContact: String,
+    traineeAlternative: String,
+    traineeCity: String,
     traineeSkills: String,
     traineeLogin: String,
     traineePassword: String,
     traineePortfolio: String,
+    traineeNotes: String,
 });
 
 const Event = mongoose.model("StudentTrainee", eventSchema);
@@ -112,23 +115,30 @@ app.post("/submitTrainee", async (req, res) => {
         const {
             traineeName,
             traineeContact,
+            traineeAlternative,
+            traineeCity,
             traineeSkills,
             traineeLogin,
             traineePassword,
             traineePortfolio,
+            traineeNotes,
         } = req.body;
 
         // Create a new Trainee document
         const newTrainee = new Trainee({
             traineeName,
             traineeContact,
+            traineeCity,
+            traineeAlternative,
             traineeSkills,
             traineeLogin,
             traineePassword,
             traineePortfolio,
+            traineeNotes,
         });
 
         // Save the new Trainee document to the database
+        await newTrainee.save();
 
         res.status(200).send("Trainee data submitted successfully.");
     } catch (error) {

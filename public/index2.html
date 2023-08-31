@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trainee Portal</title>
+    <title>Trainer Portal</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -12,15 +12,15 @@
     <div class="nav">
         <div class="header">
             <img src="https://digigrowhub.in/wp-content/uploads/2021/10/digi-new.png" alt="">
-            <h1>Trainee Portal</h1>
+            <h1>Trainer Portal</h1>
             <div class="nav-btn">
-                <button id="addTraineeButton">Add Trainee</button>
+                <button id="addTraineeButton">Add Trainer</button>
                 <button id="addButton">Management Pannel</button>
             </div>
         </div>
     </div>
     <div id="traineeFormContainer" style="display: none;">
-        <h2>Add New Trainee</h2>
+        <h2>Add New Trainer</h2>
         <form id="traineeForm">
             <label for="traineeName">Name:</label>
             <input type="text" id="traineeName" name="traineeName" required><br>
@@ -28,32 +28,45 @@
             <label for="traineeContact">Contact No.:</label>
             <input type="text" id="traineeContact" name="traineeContact" required><br>
 
+            <label for="traineeAlternative">Alternative No.:</label>
+            <input type="text" id="traineeAlternative" name="traineeAlternative"><br>
+
+            <label for="traineeCity">City:</label>
+            <input type="text" id="traineeCity" name="traineeCity" required><br>
+
             <label for="traineeSkills">Skills:</label>
             <input type="text" id="traineeSkills" name="traineeSkills" required><br>
 
-            <label for="traineeLogin">Login ID:</label>
+            <label for="traineeLogin">Email ID:</label>
             <input type="text" id="traineeLogin" name="traineeLogin" required><br>
 
-            <label for="traineePassword">Password:</label>
-            <input type="password" id="traineePassword" name="traineePassword" required><br>
+            <label for="traineePassword">Meeting Link:</label>
+            <input type="url" id="traineePassword" name="traineePassword" required><br>
 
             <label for="traineePortfolio">Portfolio Link:</label>
             <input type="url" id="traineePortfolio" name="traineePortfolio" required><br>
+
+            <label for="traineeNotes">Notes:</label>
+            <input type="url" id="traineeNotes" name="traineeNotes" required><br>
 
             <button type="submit">Submit</button>
         </form>
     </div>
     <div id="traineeTableContainer">
-        <h2>Trainee List</h2>
+        <h2>Trainer List</h2>
+        <input type="text" id="searchInput" placeholder="Search by Name, Skills, City">
         <table id="traineeTable">
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Contact No.</th>
+                    <th><i class="fa-brands fa-whatsapp"></i></th>
+                    <th><i class="fa-solid fa-phone"></i></th>
+                    <th>City</th>
                     <th>Skills</th>
-                    <th>Login ID</th>
-                    <th>Password</th>
+                    <th>Email ID</th>
+                    <th><i class="fa-solid tab-head fa-video"></i></th>
                     <th>Profile</th>
+                    <th>Notes</th>
                 </tr>
             </thead>
             <tbody id="traineeTableBody">
@@ -92,10 +105,13 @@
             const formDataObject = {
                 traineeName: formData.get("traineeName"),
                 traineeContact: formData.get("traineeContact"),
+                traineeAlternative: formData.get("traineeAlternative"),
+                traineeCity: formData.get("traineeCity"),
                 traineeSkills: formData.get("traineeSkills"),
                 traineeLogin: formData.get("traineeLogin"),
                 traineePassword: formData.get("traineePassword"),
                 traineePortfolio: formData.get("traineePortfolio"),
+                traineeNotes: formData.get("traineeNotes"),
             };
 
             try {
@@ -110,6 +126,7 @@
                 if (response.ok) {
                     traineeFormContainer.style.display = "none";
                     traineeForm.reset();
+                    loadTrainees();
                 } else {
                     console.error("Error submitting trainee data.");
                 }
@@ -130,10 +147,13 @@
                         row.innerHTML = `
                     <td>${trainee.traineeName}</td>
                     <td>${trainee.traineeContact}</td>
+                    <td>${trainee.traineeAlternative ? trainee.traineeAlternative : '-'}</td>
+                    <td>${trainee.traineeCity}</td>
                     <td>${trainee.traineeSkills}</td>
                     <td>${trainee.traineeLogin}</td>
-                    <td>${trainee.traineePassword}</td>
+                    <td><a href="${trainee.traineePassword}" target="_blank"><i class="fa-solid tab fa-link"></i></i></a></td>
                     <td><a href="${trainee.traineePortfolio}" target="_blank"><i class="fa-solid tab fa-arrow-up-right-from-square"></i></i></a></td>
+                    <td><a href="${trainee.traineeNotes}" target="_blank"><i class="fa-brands tab fa-google-drive"></i></a></td>
                 `;
 
                         traineeTableBody.appendChild(row);
