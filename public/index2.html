@@ -46,7 +46,7 @@
             <label for="traineePortfolio">Portfolio Link:</label>
             <input type="url" id="traineePortfolio" name="traineePortfolio" required><br>
 
-            <label for="traineeNotes">Notes:</label>
+            <label for="traineeNotes">GDrive Link:</label>
             <input type="url" id="traineeNotes" name="traineeNotes" required><br>
 
             <button type="submit">Submit</button>
@@ -54,7 +54,7 @@
     </div>
     <div id="traineeTableContainer">
         <h2>Trainer List</h2>
-        <input type="text" id="searchInput" placeholder="Search by Name, Skills, City">
+        <input type="text" id="searchInput" placeholder="Search by Name, Skills, City" oninput="searchTrainers()">
         <table id="traineeTable">
             <thead>
                 <tr>
@@ -126,7 +126,6 @@
                 if (response.ok) {
                     traineeFormContainer.style.display = "none";
                     traineeForm.reset();
-                    loadTrainees();
                 } else {
                     console.error("Error submitting trainee data.");
                 }
@@ -134,6 +133,25 @@
                 console.error("An error occurred while submitting trainee data.", error);
             }
         });
+        function searchTrainers() {
+            const searchInput = document.getElementById("searchInput");
+            const searchText = searchInput.value.toLowerCase(); // Convert the search text to lowercase for case-insensitive search
+
+            const trainerRows = document.querySelectorAll("#traineeTableBody tr");
+
+            trainerRows.forEach((row) => {
+                const name = row.querySelector("td:nth-child(1)").textContent.toLowerCase();
+                const skills = row.querySelector("td:nth-child(5)").textContent.toLowerCase();
+                const city = row.querySelector("td:nth-child(4)").textContent.toLowerCase();
+
+                if (name.includes(searchText) || skills.includes(searchText) || city.includes(searchText)) {
+                    row.style.display = ""; // Show the row if it matches the search
+                } else {
+                    row.style.display = "none"; // Hide the row if it doesn't match the search
+                }
+            });
+        }
+
         async function loadTrainees() {
             traineeTableBody.innerHTML = "";
 
@@ -168,8 +186,6 @@
                 console.error("An error occurred while loading trainees:", error);
             }
         }
-
-
         loadTrainees();
     </script>
 
