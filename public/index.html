@@ -202,27 +202,27 @@
             deleteButton.classList.add('red-button');
             deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
             deleteButton.addEventListener('click', async () => {
-                const password = prompt("Enter password:");
-                if (password !== null) {
-                    const isValidPassword = await validatePassword(password);
-                    if (isValidPassword) {
-                        try {
-                            const response = await fetch(`/delete/${event._id}`, {
-                                method: 'DELETE'
-                            });
+                // const password = prompt("Enter password:");
+                // if (password !== null) {
+                //     const isValidPassword = await validatePassword(password);
+                //     if (isValidPassword) {
+                try {
+                    const response = await fetch(`/delete/${event._id}`, {
+                        method: 'DELETE'
+                    });
 
-                            if (response.ok) {
-                                loadEvents();
-                            } else {
-                                console.error('Error deleting data.');
-                            }
-                        } catch (error) {
-                            console.error('An error occurred while deleting data.', error);
-                        }
+                    if (response.ok) {
+                        loadEvents();
                     } else {
-                        alert("Invalid password. Access denied.");
+                        console.error('Error deleting data.');
                     }
+                } catch (error) {
+                    console.error('An error occurred while deleting data.', error);
                 }
+                // } else {
+                //     alert("Invalid password. Access denied.");
+                // }
+                // }
             });
 
             return deleteButton;
@@ -252,75 +252,74 @@
         }
 
         async function openEditForm(event) {
-            const password = prompt("Enter password:");
-            if (password !== null) {
-                const isValidPassword = await validatePassword(password);
-                if (isValidPassword) {
-                    // Proceed with edit action
-                    editFormContainer.style.display = "block";
+            // const password = prompt("Enter password:");
+            // if (password !== null) {
+            //     const isValidPassword = await validatePassword(password);
+            //     if (isValidPassword) {
+            // Proceed with edit action
+            editFormContainer.style.display = "block";
 
-                    const editForm = document.getElementById('editForm');
-                    const editStartDate = document.getElementById('editStartDate');
-                    const editEndDate = document.getElementById('editEndDate');
-                    const editCourseName = document.getElementById('editCourseName');
-                    const editDuration = document.getElementById('editDuration');
-                    const editStartTime = document.getElementById('editStartTime');
-                    const editEndTime = document.getElementById('editEndTime');
-                    const editTrainerName = document.getElementById('editTrainerName');
-                    const editSyllabusLink = document.getElementById('editSyllabusLink');
-                    const editMeetingLink = document.getElementById('editMeetingLink');
-                    const editStudentInfoLink = document.getElementById('editStudentInfoLink');
+            const editForm = document.getElementById('editForm');
+            const editStartDate = document.getElementById('editStartDate');
+            const editEndDate = document.getElementById('editEndDate');
+            const editCourseName = document.getElementById('editCourseName');
+            const editDuration = document.getElementById('editDuration');
+            const editStartTime = document.getElementById('editStartTime');
+            const editEndTime = document.getElementById('editEndTime');
+            const editTrainerName = document.getElementById('editTrainerName');
+            const editSyllabusLink = document.getElementById('editSyllabusLink');
+            const editMeetingLink = document.getElementById('editMeetingLink');
+            const editStudentInfoLink = document.getElementById('editStudentInfoLink');
 
-                    editStartDate.value = event.startDate;
-                    editEndDate.value = event.endDate;
-                    editCourseName.value = event.courseName;
-                    editDuration.value = event.duration;
-                    editStartTime.value = event.startTime;
-                    editEndTime.value = event.endTime;
-                    editTrainerName.value = event.trainerName;
-                    editSyllabusLink.value = event.syllabusLink;
-                    editMeetingLink.value = event.meetingLink;
-                    editStudentInfoLink.value = event.studentInfoLink;
+            editStartDate.value = event.startDate;
+            editEndDate.value = event.endDate;
+            editCourseName.value = event.courseName;
+            editDuration.value = event.duration;
+            editStartTime.value = event.startTime;
+            editEndTime.value = event.endTime;
+            editTrainerName.value = event.trainerName;
+            editSyllabusLink.value = event.syllabusLink;
+            editMeetingLink.value = event.meetingLink;
+            editStudentInfoLink.value = event.studentInfoLink;
 
-                    editForm.addEventListener('submit', async (e) => {
-                        e.preventDefault();
+            editForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
 
-                        const updatedData = {
-                            startDate: editStartDate.value,
-                            endDate: editEndDate.value,
-                            courseName: editCourseName.value,
-                            duration: editDuration.value,
-                            startTime: editStartTime.value,
-                            endTime: editEndTime.value,
-                            trainerName: editTrainerName.value,
-                            syllabusLink: editSyllabusLink.value,
-                            meetingLink: editMeetingLink.value,
-                            studentInfoLink: editStudentInfoLink.value
-                        };
+                const updatedData = {
+                    startDate: editStartDate.value,
+                    endDate: editEndDate.value,
+                    courseName: editCourseName.value,
+                    duration: editDuration.value,
+                    startTime: editStartTime.value,
+                    endTime: editEndTime.value,
+                    trainerName: editTrainerName.value,
+                    syllabusLink: editSyllabusLink.value,
+                    meetingLink: editMeetingLink.value,
+                    studentInfoLink: editStudentInfoLink.value
+                };
 
-                        try {
-                            const response = await fetch(`/edit/${event._id}`, {
-                                method: 'PATCH',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify(updatedData)
-                            });
-
-                            if (response.ok) {
-                                editFormContainer.style.display = 'none';
-                                loadEvents();
-                            } else {
-                                console.error('Error updating data.');
-                            }
-                        } catch (error) {
-                            console.error('An error occurred while updating data.', error);
-                        }
+                try {
+                    const response = await fetch(`/edit/${event._id}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedData)
                     });
+
+                    if (response.ok) {
+                        editFormContainer.style.display = 'none';
+                        loadEvents();
+                    } else {
+                        console.error('Error updating data.');
+                    }
+                } catch (error) {
+                    console.error('An error occurred while updating data.', error);
                 }
-            } else {
-                alert("Invalid password. Access denied.");
-            }
+            });
+            //} else {
+            //     alert("Invalid password. Access denied.");
+            // }
         }
         const searchInput = document.getElementById('searchInput');
         searchInput.addEventListener('input', () => {
