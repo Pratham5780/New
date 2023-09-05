@@ -18,7 +18,7 @@
     color: white;
 }
 .nav{
-    background-color: #002fa7;
+    background: #002fa7;
 }
 .header img{
     width: 150px;
@@ -105,7 +105,7 @@ table, tr, td, th{
     font-size: 14px;
     }
 thead{
-    background-color: #002fa7;
+    background: #002fa7;
     color: #fff;
 }
 th{
@@ -152,8 +152,8 @@ button:hover{
     border: 2px solid #002fa7
 }
 .searchbar2{
-    width: 89%;
-    margin-left: 60px;
+    width: 60%;
+    margin-left: 270px;
     margin-bottom: 5px;
     padding: 5px 10px;
     font-size: 12px;
