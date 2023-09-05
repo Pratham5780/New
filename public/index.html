@@ -40,6 +40,9 @@
             <label for="endTime">End Time:</label>
             <input type="time" id="endTime" name="endTime" required><br>
 
+            <label for="Counsellor">End Time:</label>
+            <input type="text" id="Counsellor" name="Counsellor" required><br>
+
             <label for="trainerName">Trainer Name:</label>
             <input type="text" id="trainerName" name="trainerName" required><br>
 
@@ -77,6 +80,9 @@
             <label for="editEndTime">End Time:</label>
             <input type="time" id="editEndTime" name="endTime" required><br>
 
+            <label for="editCounsellor">Counsellor Name:</label>
+            <input type="text" id="editCounsellor" name="Counsellor" required><br>
+
             <label for="editTrainerName">Trainer Name:</label>
             <input type="text" id="editTrainerName" name="trainerName" required><br>
 
@@ -94,7 +100,7 @@
     </div>
 
     <div id="eventTableContainer">
-        <input type="text" id="searchInput" placeholder="Search by Trainer Name">
+        <input type="text" id="searchInput" class="searchbar" placeholder="Search by Trainer Name">
         <table id="eventTable">
             <thead>
                 <tr>
@@ -106,6 +112,7 @@
                     <th>Duration</th>
                     <th>Start Date</th>
                     <th>End Date</th>
+                    <th>Counsellor</th>
                     <th><i class="fa-solid tab-head fa-book"></i></th>
                     <th><i class="fa-solid tab-head fa-video"></i></th>
                     <th><i class="fa-solid tab-head fa-user"></i></th>
@@ -163,6 +170,7 @@
                 duration: formData.get('duration'),
                 startTime: formData.get('startTime'),
                 endTime: formData.get('endTime'),
+                Cousellor: formData.get('Counsellor'),
                 trainerName: formData.get('trainerName'),
                 syllabusLink: formData.get('syllabusLink'),
                 meetingLink: formData.get('meetingLink'),
@@ -266,6 +274,7 @@
             const editDuration = document.getElementById('editDuration');
             const editStartTime = document.getElementById('editStartTime');
             const editEndTime = document.getElementById('editEndTime');
+            const editCounsellor = document.getElementById('editCounsellor');
             const editTrainerName = document.getElementById('editTrainerName');
             const editSyllabusLink = document.getElementById('editSyllabusLink');
             const editMeetingLink = document.getElementById('editMeetingLink');
@@ -277,6 +286,7 @@
             editDuration.value = event.duration;
             editStartTime.value = event.startTime;
             editEndTime.value = event.endTime;
+            editCounsellor.value = event.Cousellor;
             editTrainerName.value = event.trainerName;
             editSyllabusLink.value = event.syllabusLink;
             editMeetingLink.value = event.meetingLink;
@@ -292,6 +302,7 @@
                     duration: editDuration.value,
                     startTime: editStartTime.value,
                     endTime: editEndTime.value,
+                    Counsellor: editCounsellor.value,
                     trainerName: editTrainerName.value,
                     syllabusLink: editSyllabusLink.value,
                     meetingLink: editMeetingLink.value,
@@ -348,6 +359,7 @@
             <td>${event.duration}</td>
             <td>${formatDate(event.startDate)}</td>
             <td>${formatDate(event.endDate)}</td>
+            <td>${event.Counsellor}</td>
             <td><a href="${event.syllabusLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
             <td><a href="${event.meetingLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
             <td><a href="${event.studentInfoLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
@@ -439,6 +451,7 @@
             <td>${event.duration}</td>
             <td>${formatDate(event.startDate)}</td>
             <td>${formatDate(event.endDate)}</td>
+            <td>${event.Counsellor ? event.Counsellor : 'N/A'}</td>
             <td><a href="${event.syllabusLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
             <td><a href="${event.meetingLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
             <td><a href="${event.studentInfoLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
