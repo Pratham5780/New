@@ -102,7 +102,7 @@ table {
 table, tr, td, th{
     border: 1px solid #002fa7;
     border-collapse: collapse;
-    font-size: 16px;
+    font-size: 14px;
     }
 thead{
     background-color: #002fa7;
@@ -112,7 +112,7 @@ th{
     padding: 10px 15px;
 }
 td{
-    padding: 5px 22px;
+    padding: 8px 10px;
 }
 td button{
     margin: 0 5px; 
@@ -145,8 +145,8 @@ button:hover{
     color: #002fa7;
 }
 .searchbar{
-    padding: 5px 10px;
-    margin-left: 290px;
+    padding: 5px 17px;
+    margin-left: 358px;
     font-size: 12px;
     border-radius: 5px;
     border: 2px solid #002fa7
