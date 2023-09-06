@@ -160,3 +160,18 @@ button:hover{
     border-radius: 5px;
     border: 2px solid #002fa7
 }
+/* Define the floating animation */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Apply the animation to the floating image */
+.floating-image {
+    animation: float 2s infinite;
+}
+

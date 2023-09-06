@@ -21,6 +21,9 @@
     </div>
     <div id="formContainer" style="display: none;">
         <h2>Add New Event</h2>
+        <div id="loader" style="display: none;">
+            <div class="loader"></div>
+        </div>
         <form id="eventForm">
             <label for="startDate">Start Date:</label>
             <input type="date" id="startDate" name="startDate" required><br>
@@ -95,7 +98,7 @@
             <label for="editStudentInfoLink">Student Info Link:</label>
             <input type="url" id="editStudentInfoLink" name="studentInfoLink" required><br>
 
-            <button type="submit">Update</button>
+            <button class="updateButton" type="submit">Update</button>
         </form>
     </div>
 
@@ -132,6 +135,8 @@
         const eventForm = document.getElementById("eventForm");
         const eventTableBody = document.getElementById('eventTableBody');
         const traineePortalButton = document.getElementById("traineePortalButton");
+        const loader = document.getElementById("loader");
+        const updateButton = document.getElementsByClassName("updateButton");
 
 
         traineePortalButton.addEventListener("click", async function () {
@@ -176,6 +181,8 @@
                 meetingLink: formData.get('meetingLink'),
                 studentInfoLink: formData.get('studentInfoLink')
             };
+            eventForm.style.display = "none";
+            loader.style.display = "block";
 
             try {
                 const response = await fetch("/submit", {
@@ -190,11 +197,14 @@
                     formContainer.style.display = "none";
                     loadEvents();
                     eventForm.reset(); // Reset the form
+                    alert("Data added successfully!");
                 } else {
                     console.error("Error submitting data.");
                 }
             } catch (error) {
                 console.error("An error occurred while submitting data.", error);
+            } finally {
+                loader.style.display = "none";
             }
         });
 
@@ -205,6 +215,15 @@
             return editButton;
         }
 
+        function toggleButtonLoader(button, isLoading) {
+            if (isLoading) {
+                button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+                button.disabled = true;
+            } else {
+                button.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                button.disabled = false;
+            }
+        }
         function createDeleteButton(event) {
             const deleteButton = document.createElement('button');
             deleteButton.classList.add('red-button');
@@ -214,6 +233,7 @@
                 // if (password !== null) {
                 //     const isValidPassword = await validatePassword(password);
                 //     if (isValidPassword) {
+                toggleButtonLoader(deleteButton, true);
                 try {
                     const response = await fetch(`/delete/${event._id}`, {
                         method: 'DELETE'
@@ -226,6 +246,9 @@
                     }
                 } catch (error) {
                     console.error('An error occurred while deleting data.', error);
+                } finally {
+                    // Revert the delete button to its normal state
+                    toggleButtonLoader(deleteButton, false);
                 }
                 // } else {
                 //     alert("Invalid password. Access denied.");
@@ -294,7 +317,7 @@
 
             editForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-
+                toggleButtonLoader(updateButton, true);
                 const updatedData = {
                     startDate: editStartDate.value,
                     endDate: editEndDate.value,
@@ -326,6 +349,9 @@
                     }
                 } catch (error) {
                     console.error('An error occurred while updating data.', error);
+                } finally {
+                    // Revert the "Update" button to its normal state
+                    toggleButtonLoader(updateButton, false);
                 }
             });
             //} else {
