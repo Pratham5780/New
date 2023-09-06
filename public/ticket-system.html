@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="nav">
+        <div class="header">
+            <img src="https://digigrowhub.in/wp-content/uploads/2021/10/digi-new.png" alt="">
+            <h1>DigiGrowHub Ticket System</h1>
+            <div class="nav-btn">
+                <button id="resolvedIssueButton">Resolved Issue</button>
+                <a href="student-portal.html"><button id="ticketSystemButton">Student Portal</button></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Form -->
+    <div class="search-form">
+        <form id="searchStudentForm">
+            <label for="phoneNumberInput">Search by Phone Number:</label>
+            <input type="tel" class="search-phone" id="phoneNumberInput" name="phoneNumberInput" required>
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <!-- Display Student Details or "No Results Found" Message -->
+    <div id="studentDetailsContainer"></div>
+
+    <script src="https://kit.fontawesome.com/a8cf255646.js" crossorigin="anonymous"></script>
+    <script>
+        const searchStudentForm = document.getElementById("searchStudentForm");
+        const studentDetailsContainer = document.getElementById("studentDetailsContainer");
+
+        searchStudentForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const phoneNumberInput = document.getElementById("phoneNumberInput");
+            const phoneNumber = phoneNumberInput.value;
+
+            try {
+                const response = await fetch(`/searchStudentByPhoneNumber?phoneNumber=${phoneNumber}`);
+                const responseData = await response.json();
+
+                // Clear any previous details
+                studentDetailsContainer.innerHTML = "";
+
+                if (response.ok) {
+                    if (responseData.length > 0) {
+                        // Display student details
+                        displayStudentDetails(responseData);
+                    } else {
+                        // Display "No Results Found" message
+                        displayNoResultsMessage();
+                    }
+                } else {
+                    console.error("Error searching for student:", responseData);
+                }
+            } catch (error) {
+                console.error("An error occurred while searching for student:", error);
+            }
+        });
+
+        <!-- Inside the displayStudentDetails function -->
+        function displayStudentDetails(studentDetails) {
+            // Clear any previous details
+            studentDetailsContainer.innerHTML = "";
+
+            // Iterate through each student detail and display them
+            studentDetails.forEach((student) => {
+                const studentDiv = document.createElement("div");
+                studentDiv.classList.add("student-detail");
+
+                // Create and set content for each detail
+                const nameParagraph = document.createElement("p");
+                nameParagraph.textContent = `Name: ${student.studentName}`;
+
+                const courseParagraph = document.createElement("p");
+                courseParagraph.textContent = `Course Enrolled: ${student.courseEnrolled}`;
+
+                // Format the date to DD/MM/YYYY
+                const startDateParagraph = document.createElement("p");
+                const startDate = new Date(student.startDate);
+                const formattedStartDate = `${startDate.getDate()}/${startDate.getMonth() + 1}/${startDate.getFullYear()}`;
+                startDateParagraph.textContent = `Start Date: ${formattedStartDate}`;
+
+                const phoneNumberParagraph = document.createElement("p");
+                phoneNumberParagraph.textContent = `Phone Number: ${student.phoneNumber}`;
+
+                // Append details to the studentDiv
+                studentDiv.appendChild(nameParagraph);
+                studentDiv.appendChild(courseParagraph);
+                studentDiv.appendChild(startDateParagraph);
+                studentDiv.appendChild(phoneNumberParagraph);
+
+                // Append the studentDiv to the studentDetailsContainer
+                studentDetailsContainer.appendChild(studentDiv);
+            });
+        }
+
+
+        function displayNoResultsMessage() {
+            // Display "No Results Found" message
+            studentDetailsContainer.innerHTML = "NO RESULTS FOUND";
+        }
+    </script>
+</body>
+
+</html>

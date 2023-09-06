@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="nav">
+        <div class="header">
+            <img src="https://digigrowhub.in/wp-content/uploads/2021/10/digi-new.png" alt="">
+            <h1>DigiGrowHub Student Portal</h1>
+            <div class="nav-btn">
+                <a href="ticket-system.html"><button id="ticketSystemButton">Ticket System</button></a>
+                <button id="resolvedIssueButton">Resolved Issue</button>
+                <button id="addStudentButton">Add Student</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="studentFormContainer" style="display: none;">
+        <h2>Add New Student</h2>
+        <form id="studentForm">
+            <label for="studentName">Name:</label>
+            <input type="text" id="studentName" name="studentName" required><br>
+
+            <label for="courseEnrolled">Course Enrolled:</label>
+            <input type="text" id="courseEnrolled" name="courseEnrolled" required><br>
+
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate" name="startDate" required><br>
+
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" required><br>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <div id="studentTableContainer">
+        <table id="studentTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Course Enrolled</th>
+                    <th>Start Date</th>
+                    <th>Phone Number</th>
+                </tr>
+            </thead>
+            <tbody id="studentTableBody">
+                <!-- Data rows will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://kit.fontawesome.com/a8cf255646.js" crossorigin="anonymous"></script>
+    <script>
+        const addStudentButton = document.getElementById("addStudentButton");
+        const studentFormContainer = document.getElementById("studentFormContainer");
+        const studentForm = document.getElementById("studentForm");
+        const studentTableBody = document.getElementById("studentTableBody");
+
+        addStudentButton.addEventListener("click", function () {
+            const isVisible = studentFormContainer.style.display === "block";
+            if (isVisible) {
+                studentFormContainer.style.display = "none";
+            } else {
+                studentFormContainer.style.display = "block";
+            }
+        });
+
+        studentForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(studentForm);
+            const formDataObject = {
+                studentName: formData.get("studentName"),
+                courseEnrolled: formData.get("courseEnrolled"),
+                startDate: formData.get("startDate"),
+                phoneNumber: formData.get("phoneNumber"),
+            };
+
+            try {
+                const response = await fetch("/submitStudent", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formDataObject),
+                });
+
+                if (response.ok) {
+                    studentFormContainer.style.display = "none";
+                    loadStudents();
+                    studentForm.reset(); // Reset the form
+                } else {
+                    console.error("Error submitting student data.");
+                }
+            } catch (error) {
+                console.error("An error occurred while submitting student data.", error);
+            }
+        });
+
+        async function loadStudents() {
+            try {
+                const response = await fetch("/students");
+                const studentData = await response.json();
+
+                studentTableBody.innerHTML = ""; // Clear the existing table rows
+
+                studentData.forEach((student) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${student.studentName}</td>
+                        <td>${student.courseEnrolled}</td>
+                        <td>${student.startDate}</td>
+                        <td>${student.phoneNumber}</td>
+                    `;
+
+                    studentTableBody.appendChild(row);
+                });
+
+                const studentTableContainer = document.getElementById("studentTableContainer");
+                studentTableContainer.style.display = "block";
+            } catch (error) {
+                console.error("Error loading students:", error);
+            }
+        }
+
+        loadStudents();
+    </script>
+</body>
+
+</html>

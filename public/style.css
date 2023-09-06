@@ -41,6 +41,8 @@
 #addButton:hover{
     background-color: #37a36b;
 }
+
+#studentFormContainer,
 #traineeFormContainer,
 #editFormContainer,
 #formContainer{
@@ -54,11 +56,14 @@ box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 backdrop-filter: blur(5px);
 -webkit-backdrop-filter: blur(5px);
 }
+
 #traineeFormContainer h2,
+#studentFormContainer h2,
 #editFormContainer h2,
 #formContainer h2{
     padding-bottom: 10px;
 }
+#studentForm,
 #traineeForm,
 #editForm,
 #eventForm{
@@ -67,6 +72,7 @@ backdrop-filter: blur(5px);
     align-items: flex-start;
     justify-content: center;
 }
+#studentForm input,
 #traineeForm input,
 #editForm input,
 #eventForm input{
@@ -82,11 +88,13 @@ button{
     cursor: pointer;
     transition: 0.3s;
 }
+#studentTableContainer h2,
 #traineeTableContainer h2,
 #eventTableContainer h2{
     text-align: center;
     padding: 10px;
 }
+#studentTable,
 #traineeTable,
 #eventTable{
     margin-left: auto;
@@ -175,3 +183,25 @@ button:hover{
     animation: float 2s infinite;
 }
 
+.student-detail {
+    border: 2px solid #002fa7;
+    margin: 10px 40px;
+    border-radius: 10px;
+    padding: 10px 15px;
+    width: 25%;
+}
+
+.search-phone {
+    margin: 10px;
+    padding: 3px;
+}
+
+#searchStudentForm{
+    display: flex;
+    justify-content:center;
+    align-items:center;
+}
+
+#studentDetailsContainer{
+    display: flex;
+}
