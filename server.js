@@ -40,10 +40,20 @@ const studentSchema = new mongoose.Schema({
     phoneNumber: String,
 });
 
+const ticketSchema = new mongoose.Schema({
+    ticketID: String,
+    studentName: String,
+    phoneNumber: String,
+    issueDescription: String,
+    courseSelection: String,
+    importance: String,
+    submissionDateTime: { type: Date, default: Date.now }, // Store the date as a Date type
+});
+
 const Event = mongoose.model("StudentTrainee", eventSchema);
 const Trainee = mongoose.model("Trainee", traineeSchema);
 const Student = mongoose.model("Student", studentSchema);
-
+const Ticket = mongoose.model("Ticket", ticketSchema); 
 
 app.use(express.static("public"));
 app.use(express.json());
@@ -226,7 +236,10 @@ app.get("/searchStudentByPhoneNumber", async (req, res) => {
                 phoneNumber: student.phoneNumber,
             }));
 
-            res.status(200).json(studentDetails);
+            // Retrieve the courses associated with the student
+            const courses = students.map((student) => student.courseEnrolled);
+
+            res.status(200).json({ studentDetails, courses });
         } else {
             // If no students are found, send a JSON response indicating "No Results Found"
             res.status(404).json({ message: "No Results Found" });
@@ -238,6 +251,41 @@ app.get("/searchStudentByPhoneNumber", async (req, res) => {
 });
 
 
+function generateTicketID() {
+    const now = new Date();
+    const day = now.getDate().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+    return `digi01578${day}${minutes}${seconds}`;
+}
+
+app.post('/submitTicket', async (req, res) => {
+    try {
+        const { issueDescription, courseSelection, importance, studentName, phoneNumber } = req.body;
+
+        // Generate a unique ticket ID
+        const ticketID = generateTicketID();
+
+        // Get the current date and time
+        const submissionDateTime = new Date();
+
+        // Create a new ticket object
+        const newTicket = new Ticket({
+            ticketID,
+            issueDescription,
+            courseSelection,
+            importance,
+            studentName, 
+            phoneNumber, 
+            submissionDateTime,
+        });
+        await newTicket.save();
+          res.status(200).json({ message: 'Ticket submitted successfully' });
+    } catch (error) {
+        console.error("Error submitting ticket:", error); // Log any errors
+        res.status(500).send("An error occurred");
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

@@ -32,10 +32,63 @@
     <!-- Display Student Details or "No Results Found" Message -->
     <div id="studentDetailsContainer"></div>
 
+    <!-- Add Ticket Button -->
+    <button id="addTicketButton" style="display: none;">Add Ticket</button>
+
+    <!-- Add Ticket Form (Initially Hidden) -->
+    <div id="addTicketForm" style="display: none;">
+        <h2>Add Ticket</h2>
+        <form id="ticketForm">
+            <label for="issueDescription">Issue Description:</label>
+            <textarea id="issueDescription" name="issueDescription" rows="4" required></textarea><br>
+
+            <label for="courseSelection">Select Course:</label>
+            <select id="courseSelection" name="courseSelection" required>
+                <!-- Courses will be dynamically populated here based on the selected student -->
+            </select><br>
+
+            <label>Importance:</label>
+            <div class="color-selection">
+                <label class="color-label">
+                    <input type="radio" name="importance" value="Red">
+                    <span class="color-circle red"></span> <i class="fa-solid fa-circle" style="color: #ff0000;"></i>
+                </label>
+
+                <label class="color-label">
+                    <input type="radio" name="importance" value="Yellow">
+                    <span class="color-circle yellow"></span> <i class="fa-solid fa-circle" style="color: #ffc800;"></i>
+                </label>
+
+                <label class="color-label">
+                    <input type="radio" name="importance" value="Green">
+                    <span class="color-circle green"></span> <i class="fa-solid fa-circle" style="color: #009e12;"></i>
+                </label>
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
     <script src="https://kit.fontawesome.com/a8cf255646.js" crossorigin="anonymous"></script>
     <script>
         const searchStudentForm = document.getElementById("searchStudentForm");
         const studentDetailsContainer = document.getElementById("studentDetailsContainer");
+        const addTicketButton = document.getElementById("addTicketButton");
+        const addTicketForm = document.getElementById("addTicketForm");
+        const ticketForm = document.getElementById("ticketForm");
+        const courseSelection = document.getElementById("courseSelection");
+
+        function toggleAddTicketForm() {
+            if (addTicketForm.style.display === "none" || addTicketForm.style.display === "") {
+                addTicketForm.style.display = "block";
+            } else {
+                addTicketForm.style.display = "none";
+            }
+        }
+
+        addTicketButton.addEventListener("click", function () {
+            toggleAddTicketForm();
+        });
 
         searchStudentForm.addEventListener("submit", async function (event) {
             event.preventDefault();
@@ -47,17 +100,35 @@
                 const response = await fetch(`/searchStudentByPhoneNumber?phoneNumber=${phoneNumber}`);
                 const responseData = await response.json();
 
-                // Clear any previous details
                 studentDetailsContainer.innerHTML = "";
 
                 if (response.ok) {
-                    if (responseData.length > 0) {
+                    if (responseData.studentDetails.length > 0) {
                         // Display student details
-                        displayStudentDetails(responseData);
+                        displayStudentDetails(responseData.studentDetails);
+                        addTicketButton.style.display = "block"; // Show the "Add Ticket" button
+
+                        // Check if the student is enrolled in multiple courses
+                        if (Array.isArray(responseData.courses)) {
+                            // If enrolled in multiple courses, populate the course selection dropdown with all courses
+                            populateCourseDropdown(responseData.courses);
+                        } else {
+                            // If enrolled in a single course, create a single option in the dropdown
+                            populateCourseDropdown([responseData.courses]);
+                        }
+
+                        // Assuming that the student's name is available in the responseData
+                        const studentName = responseData.studentDetails[0].studentName;
+
+                        // Attach the student's name to the "Add Ticket" button
+                        addTicketButton.dataset.studentName = studentName;
                     } else {
-                        // Display "No Results Found" message
                         displayNoResultsMessage();
+                        addTicketButton.style.display = "none"; // Hide the "Add Ticket" button
                     }
+                } else if (response.status === 404) {
+                    displayNoResultsMessage();
+                    addTicketButton.style.display = "none"; // Hide the "Add Ticket" button
                 } else {
                     console.error("Error searching for student:", responseData);
                 }
@@ -66,24 +137,85 @@
             }
         });
 
-        <!-- Inside the displayStudentDetails function -->
+        ticketForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const issueDescription = document.getElementById("issueDescription").value;
+            const courseSelection = document.getElementById("courseSelection").value;
+            const importance = document.querySelector('input[name="importance"]:checked').value;
+
+            const phoneNumberInput = document.getElementById("phoneNumberInput");
+            const phoneNumber = phoneNumberInput.value;
+
+            // Retrieve the student's name from the "Add Ticket" button's data attribute
+            const studentName = addTicketButton.dataset.studentName;
+
+            try {
+                const response = await fetch("/submitTicket", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        issueDescription,
+                        courseSelection,
+                        importance,
+                        studentName, // Include the student's name
+                        phoneNumber, // Include the student's phone number
+                    }),
+                });
+
+                const responseData = await response.json();
+
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    console.error("Error submitting ticket:", responseData);
+                    // Optionally, you can display an error message to the user here.
+                }
+            } catch (error) {
+                console.error("An error occurred while submitting the ticket:", error);
+                // Optionally, you can display an error message to the user here.
+            }
+        });
+
+        // Function to populate the course dropdown based on student's courses
+        function populateCourseDropdown(courses) {
+            const courseSelection = document.getElementById("courseSelection");
+            courseSelection.innerHTML = "";
+
+            if (Array.isArray(courses) && courses.length > 0) {
+                // Flatten the courses array and remove duplicates
+                const uniqueCourses = [...new Set(courses.flat())];
+
+                uniqueCourses.forEach((course) => {
+                    const option = document.createElement("option");
+                    option.value = course;
+                    option.textContent = course;
+                    courseSelection.appendChild(option);
+                });
+            } else {
+                // If no courses are found, display a default option
+                const option = document.createElement("option");
+                option.value = "";
+                option.textContent = "No Courses Found";
+                courseSelection.appendChild(option);
+            }
+        }
+
         function displayStudentDetails(studentDetails) {
-            // Clear any previous details
             studentDetailsContainer.innerHTML = "";
 
-            // Iterate through each student detail and display them
             studentDetails.forEach((student) => {
                 const studentDiv = document.createElement("div");
                 studentDiv.classList.add("student-detail");
 
-                // Create and set content for each detail
                 const nameParagraph = document.createElement("p");
                 nameParagraph.textContent = `Name: ${student.studentName}`;
 
                 const courseParagraph = document.createElement("p");
                 courseParagraph.textContent = `Course Enrolled: ${student.courseEnrolled}`;
 
-                // Format the date to DD/MM/YYYY
                 const startDateParagraph = document.createElement("p");
                 const startDate = new Date(student.startDate);
                 const formattedStartDate = `${startDate.getDate()}/${startDate.getMonth() + 1}/${startDate.getFullYear()}`;
@@ -92,20 +224,16 @@
                 const phoneNumberParagraph = document.createElement("p");
                 phoneNumberParagraph.textContent = `Phone Number: ${student.phoneNumber}`;
 
-                // Append details to the studentDiv
                 studentDiv.appendChild(nameParagraph);
                 studentDiv.appendChild(courseParagraph);
                 studentDiv.appendChild(startDateParagraph);
                 studentDiv.appendChild(phoneNumberParagraph);
 
-                // Append the studentDiv to the studentDetailsContainer
                 studentDetailsContainer.appendChild(studentDiv);
             });
         }
 
-
         function displayNoResultsMessage() {
-            // Display "No Results Found" message
             studentDetailsContainer.innerHTML = "NO RESULTS FOUND";
         }
     </script>

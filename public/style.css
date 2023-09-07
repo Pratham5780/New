@@ -41,7 +41,7 @@
 #addButton:hover{
     background-color: #37a36b;
 }
-
+#addTicketForm,
 #studentFormContainer,
 #traineeFormContainer,
 #editFormContainer,
@@ -63,6 +63,7 @@ backdrop-filter: blur(5px);
 #formContainer h2{
     padding-bottom: 10px;
 }
+#ticketForm,
 #studentForm,
 #traineeForm,
 #editForm,
@@ -72,6 +73,7 @@ backdrop-filter: blur(5px);
     align-items: flex-start;
     justify-content: center;
 }
+
 #studentForm input,
 #traineeForm input,
 #editForm input,
@@ -94,6 +96,7 @@ button{
     text-align: center;
     padding: 10px;
 }
+#ticketForm,
 #studentTable,
 #traineeTable,
 #eventTable{
@@ -206,4 +209,11 @@ button:hover{
 #studentDetailsContainer{
     display: flex;
     margin-left: 50px;
+}
+#issueDescription{
+    width: 285px;
+    height: 100px;
+}
+#addTicketButton{
+    margin: 10px auto;
 }
