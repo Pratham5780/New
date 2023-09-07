@@ -287,6 +287,16 @@ app.post('/submitTicket', async (req, res) => {
     }
 });
 
+app.get("/getTickets", async (req, res) => {
+    try {
+        const tickets = await Ticket.find(); // Assuming you want to retrieve all tickets
+        res.status(200).json(tickets);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("An error occurred");
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

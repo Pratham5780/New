@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Issue Page</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="nav">
+        <div class="header">
+            <img src="https://digigrowhub.in/wp-content/uploads/2021/10/digi-new.png" alt="">
+            <h1>DigiGrowHub Ticket</h1>
+            <div class="nav-btn">
+                <button id="resolvedIssueButton">Resolved</button>
+                <a href="student-portal.html"><button id="ticketSystemButton">Student Portal</button></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ticket Cards Container -->
+    <div id="ticketContainer">
+        <!-- Ticket cards will be added here dynamically -->
+    </div>
+
+    <script>
+        // Function to fetch ticket data from the server
+        async function fetchTickets() {
+            try {
+                const response = await fetch('/getTickets'); // Replace with your actual endpoint
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching tickets:', error);
+                return [];
+            }
+        }
+
+        // Function to display ticket cards
+        async function displayTickets() {
+            const tickets = await fetchTickets();
+            const ticketContainer = document.getElementById('ticketContainer');
+
+            <!-- Inside your ticket forEach loop in displayTickets function -->
+            tickets.forEach((ticket) => {
+                // Create a card element
+                const card = document.createElement('div');
+                card.classList.add('ticket-card');
+
+                // Create a circle element based on importance
+                const importanceCircle = document.createElement('div');
+
+                // Check ticket importance and add the corresponding color circle
+                if (ticket.importance === 'Red') {
+                    importanceCircle.classList.add('red-circle');
+                } else if (ticket.importance === 'Yellow') {
+                    importanceCircle.classList.add('yellow-circle');
+                } else if (ticket.importance === 'Green') {
+                    importanceCircle.classList.add('green-circle');
+                }
+
+                // Create card content
+                const name = document.createElement('p');
+                name.textContent = `Name: ${ticket.studentName}`;
+
+                const ticketID = document.createElement('p');
+                ticketID.textContent = `Ticket ID: ${ticket.ticketID}`;
+
+                const phoneNumber = document.createElement('p');
+                phoneNumber.textContent = `Phone Number: ${ticket.phoneNumber}`;
+
+                const issueDescription = document.createElement('p');
+                issueDescription.textContent = `Issue Description: ${ticket.issueDescription}`;
+
+                const submissionDateTime = document.createElement('p');
+                const submissionDate = new Date(ticket.submissionDateTime);
+                submissionDateTime.textContent = `Submission Date and Time: ${submissionDate.toLocaleString()}`;
+
+                // Append content and the colored circle to the card
+                card.appendChild(importanceCircle); // Add the colored circle
+                card.appendChild(name);
+                card.appendChild(ticketID);
+                card.appendChild(phoneNumber);
+                card.appendChild(issueDescription);
+                card.appendChild(submissionDateTime);
+
+                // Append the card to the container
+                ticketContainer.appendChild(card);
+            });
+        }
+
+        // Call the function to display tickets when the page loads
+        window.addEventListener('load', displayTickets);
+    </script>
+</body>
+
+</html>
