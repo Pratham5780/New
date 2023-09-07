@@ -32,6 +32,7 @@
 
     <!-- Display Student Details or "No Results Found" Message -->
     <div id="studentDetailsContainer"></div>
+    <div id="issueCardsContainer"></div>
 
     <!-- Add Ticket Button -->
     <button id="addTicketButton" style="display: none;">Add Ticket</button>
@@ -40,13 +41,13 @@
     <div id="addTicketForm" style="display: none;">
         <h2>Add Ticket</h2>
         <form id="ticketForm">
-            <label for="issueDescription">Issue Description:</label>
-            <textarea id="issueDescription" name="issueDescription" rows="4" required></textarea><br>
-
             <label for="courseSelection">Select Course:</label>
             <select id="courseSelection" name="courseSelection" required>
                 <!-- Courses will be dynamically populated here based on the selected student -->
             </select><br>
+
+            <label for="issueDescription">Issue Description:</label>
+            <textarea id="issueDescription" name="issueDescription" rows="4" required></textarea><br>
 
             <label>Importance:</label>
             <div class="color-selection">
@@ -123,6 +124,7 @@
 
                         // Attach the student's name to the "Add Ticket" button
                         addTicketButton.dataset.studentName = studentName;
+                        displayIssueCards(phoneNumber);
                     } else {
                         displayNoResultsMessage();
                         addTicketButton.style.display = "none"; // Hide the "Add Ticket" button
@@ -137,6 +139,97 @@
                 console.error("An error occurred while searching for student:", error);
             }
         });
+
+        async function displayIssueCards(phoneNumber) {
+            try {
+                const issueResponse = await fetch('/getIssuesByPhoneNumber?phoneNumber=' + phoneNumber);
+                const issueData = await issueResponse.json();
+
+                const issueCardsContainer = document.getElementById('issueCardsContainer');
+                issueCardsContainer.innerHTML = ''; // Clear previous issue cards
+                issueData.sort((a, b) => new Date(b.submissionDateTime) - new Date(a.submissionDateTime));
+
+                if (issueResponse.ok && issueData.length > 0) {
+                    issueData.forEach((issue) => {
+                        const issueCard = createIssueCard(issue);
+                        issueCardsContainer.appendChild(issueCard);
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching issue data:', error);
+            }
+        }
+
+        // Function to create an issue card
+        function createIssueCard(issue) {
+            const issueCard = document.createElement('div');
+            issueCard.classList.add('issue-card');
+
+            // Create a container div for ticket_id and timestamp
+            const infoContainer = document.createElement('div');
+            infoContainer.classList.add('issue-info-container');
+
+            // Create elements for ticket_id and timestamp
+            const ticketID = document.createElement('p');
+            ticketID.textContent = `Ticket ID: ${issue.ticketID}`;
+
+            const timestamp = document.createElement('p');
+            timestamp.textContent = `${new Date(issue.submissionDateTime).toLocaleString()}`;
+
+            const revokeButton = document.createElement('button');
+            const revokeIcon = document.createElement('i');
+            revokeIcon.classList.add('fa-solid', 'fa-arrows-rotate');
+            revokeButton.appendChild(revokeIcon);
+            revokeButton.classList.add('revoke-button');
+
+            revokeButton.addEventListener('click', async () => {
+                await revokeIssue(issue.ticketID);
+                location.reload();
+            });
+
+            // Append ticket_id and timestamp elements to the info container
+            infoContainer.appendChild(ticketID);
+            infoContainer.appendChild(timestamp);
+            infoContainer.appendChild(revokeButton);
+
+            // You can customize the card structure based on your requirements
+            // Here, we'll assume an issue has a description
+            const description = document.createElement('p');
+            description.textContent = `Issue Description: ${issue.issueDescription}`;
+
+            // Append the info container and description to the issue card
+            issueCard.appendChild(infoContainer);
+            issueCard.appendChild(description);
+
+            return issueCard;
+        }
+
+        async function revokeIssue(ticketID) {
+            try {
+                const response = await fetch('/revokeTicket', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ ticketID }),
+                });
+
+                const responseData = await response.json();
+
+                if (response.ok) {
+                    // Ticket successfully revoked
+                    console.log(`Ticket ${ticketID} revoked at ${new Date().toLocaleString()}`);
+                    // You can update the UI here if needed
+                } else {
+                    console.error('Error revoking ticket:', responseData);
+                    // Handle errors or display a message to the user
+                }
+            } catch (error) {
+                console.error('An error occurred while revoking the ticket:', error);
+                // Handle errors or display a message to the user
+            }
+        }
+
 
         ticketForm.addEventListener("submit", async function (event) {
             event.preventDefault();

@@ -217,6 +217,7 @@ button:hover{
 #addTicketButton{
     margin: 10px auto;
 }
+.issue-card,
 .ticket-card {
     border: 1px solid #002fa7;
     border-radius: 10px;
@@ -254,10 +255,12 @@ button:hover{
     top: 10px;
     right: 10px;
 }
+.issue-info-container,
 .ticket-details {
     display: flex;
     font-size: 14px;
     justify-content: space-between;
+    align-items: center;
     padding-right: 50px;
     padding-bottom: 15px;
     font-style: italic;
@@ -273,4 +276,10 @@ button:hover{
 }
 #searchInput{
     padding-right:200px;
+}
+.revoke-button {
+    color: white;
+    background-color: red;
+    border: none;
+    cursor: pointer;
 }

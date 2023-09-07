@@ -297,6 +297,48 @@ app.get("/getTickets", async (req, res) => {
     }
 });
 
+app.get('/getIssuesByPhoneNumber', async (req, res) => {
+    try {
+        const phoneNumber = req.query.phoneNumber;
+
+        // Query the database to find all issues with the given phone number
+        const issues = await Ticket.find({ phoneNumber });
+
+        if (issues.length > 0) {
+            // If issues are found, send them as a JSON response
+            res.status(200).json(issues);
+        } else {
+            // If no issues are found, send a JSON response indicating "No Issues Found"
+            res.status(404).json({ message: "No Issues Found" });
+        }
+    } catch (error) {
+        console.error("Error fetching issues by phone number:", error);
+        res.status(500).json({ error: "An error occurred" });
+    }
+});
+
+app.post('/revokeTicket', async (req, res) => {
+    try {
+        const { ticketID } = req.body;
+
+        // Find the ticket by ticketID
+        const ticket = await Ticket.findOne({ ticketID });
+
+        if (!ticket) {
+            return res.status(404).json({ message: 'Ticket not found' });
+        }
+
+        // Update the ticket with the current time
+        ticket.submissionDateTime = new Date();
+        await ticket.save();
+
+        res.status(200).json({ message: 'Ticket revoked successfully' });
+    } catch (error) {
+        console.error('Error revoking ticket:', error);
+        res.status(500).json({ error: 'An error occurred' });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
