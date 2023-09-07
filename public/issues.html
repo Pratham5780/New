@@ -20,11 +20,29 @@
         </div>
     </div>
 
+    <!-- Importance Filter Dropdown -->
+    <div class="filter-container">
+        <div class="filter">
+            <label for="searchInput">Search:</label>
+            <input type="text" id="searchInput" placeholder="Enter Phone/Ticket ID">
+        </div>
+        <div class="filter">
+            <label for="importanceSelect">Sort <i class="fa-solid fa-sort"></i></label>
+            <select id="importanceSelect">
+                <option value="all" selected>All</option>
+                <option value="Red">Urgent</option>
+                <option value="Yellow">Important</option>
+                <option value="Green">Minor</option>
+            </select>
+        </div>
+    </div>
+
     <!-- Ticket Cards Container -->
     <div id="ticketContainer">
         <!-- Ticket cards will be added here dynamically -->
     </div>
 
+    <script src="https://kit.fontawesome.com/a8cf255646.js" crossorigin="anonymous"></script>
     <script>
         // Function to fetch ticket data from the server
         async function fetchTickets() {
@@ -38,57 +56,115 @@
             }
         }
 
-        // Function to display ticket cards
+        // Function to display ticket cards sorted by submission date and filtered by importance
         async function displayTickets() {
             const tickets = await fetchTickets();
             const ticketContainer = document.getElementById('ticketContainer');
+            const importanceSelect = document.getElementById('importanceSelect');
+            const searchInput = document.getElementById('searchInput');
 
-            <!-- Inside your ticket forEach loop in displayTickets function -->
-            tickets.forEach((ticket) => {
-                // Create a card element
-                const card = document.createElement('div');
-                card.classList.add('ticket-card');
+            // Sort tickets by submissionDateTime in descending order (newest to oldest)
+            tickets.sort((a, b) => new Date(b.submissionDateTime) - new Date(a.submissionDateTime));
 
-                // Create a circle element based on importance
-                const importanceCircle = document.createElement('div');
+            // Function to filter tickets by importance
+            function filterTicketsByImportance(importance) {
+                return tickets.filter((ticket) => importance === 'all' || ticket.importance === importance);
+            }
 
-                // Check ticket importance and add the corresponding color circle
-                if (ticket.importance === 'Red') {
-                    importanceCircle.classList.add('red-circle');
-                } else if (ticket.importance === 'Yellow') {
-                    importanceCircle.classList.add('yellow-circle');
-                } else if (ticket.importance === 'Green') {
-                    importanceCircle.classList.add('green-circle');
+            // Function to filter tickets by search input
+            function filterTicketsBySearchInput(input) {
+                return tickets.filter((ticket) =>
+                    ticket.phoneNumber.includes(input) ||
+                    ticket.ticketID.endsWith(input)
+                );
+            }
+
+            // Function to update the displayed tickets
+            function updateDisplayedTickets() {
+                const selectedImportance = importanceSelect.value;
+                const searchValue = searchInput.value.trim().toLowerCase();
+
+                let filteredTickets = filterTicketsByImportance(selectedImportance);
+
+                if (searchValue !== '') {
+                    filteredTickets = filterTicketsBySearchInput(searchValue);
                 }
 
-                // Create card content
-                const name = document.createElement('p');
-                name.textContent = `Name: ${ticket.studentName}`;
+                // Clear the ticket container
+                ticketContainer.innerHTML = '';
 
-                const ticketID = document.createElement('p');
-                ticketID.textContent = `Ticket ID: ${ticket.ticketID}`;
+                filteredTickets.forEach((ticket) => {
+                    // Create a card element
+                    const card = document.createElement('div');
+                    card.classList.add('ticket-card');
 
-                const phoneNumber = document.createElement('p');
-                phoneNumber.textContent = `Phone Number: ${ticket.phoneNumber}`;
+                    // Create a circle element based on importance
+                    const importanceCircle = document.createElement('div');
 
-                const issueDescription = document.createElement('p');
-                issueDescription.textContent = `Issue Description: ${ticket.issueDescription}`;
+                    // Check ticket importance and add the corresponding color circle
+                    if (ticket.importance === 'Red') {
+                        importanceCircle.classList.add('red-circle');
+                    } else if (ticket.importance === 'Yellow') {
+                        importanceCircle.classList.add('yellow-circle');
+                    } else if (ticket.importance === 'Green') {
+                        importanceCircle.classList.add('green-circle');
+                    }
 
-                const submissionDateTime = document.createElement('p');
-                const submissionDate = new Date(ticket.submissionDateTime);
-                submissionDateTime.textContent = `Submission Date and Time: ${submissionDate.toLocaleString()}`;
+                    // Create a container for most ticket details (excluding issue description)
+                    const ticketDetailsContainer = document.createElement('div');
+                    ticketDetailsContainer.classList.add('ticket-details');
 
-                // Append content and the colored circle to the card
-                card.appendChild(importanceCircle); // Add the colored circle
-                card.appendChild(name);
-                card.appendChild(ticketID);
-                card.appendChild(phoneNumber);
-                card.appendChild(issueDescription);
-                card.appendChild(submissionDateTime);
+                    // Create card content for most ticket details
+                    const name = document.createElement('p');
+                    name.textContent = `Name: ${ticket.studentName}`;
 
-                // Append the card to the container
-                ticketContainer.appendChild(card);
-            });
+                    const ticketID = document.createElement('p');
+                    ticketID.textContent = `Ticket ID: ${ticket.ticketID}`;
+
+                    const phoneNumber = document.createElement('p');
+                    phoneNumber.textContent = `Phone Number: ${ticket.phoneNumber}`;
+
+                    const submissionDateTime = document.createElement('p');
+                    const submissionDate = new Date(ticket.submissionDateTime);
+                    submissionDateTime.textContent = `Submission: ${submissionDate.toLocaleString()}`;
+
+                    const courseName = document.createElement('p');
+                    courseName.textContent = `Course Name: ${ticket.courseSelection}`;
+
+                    // Append content to the ticket details container
+                    ticketDetailsContainer.appendChild(ticketID);
+                    ticketDetailsContainer.appendChild(name);
+                    ticketDetailsContainer.appendChild(courseName);
+                    ticketDetailsContainer.appendChild(phoneNumber);
+                    ticketDetailsContainer.appendChild(submissionDateTime);
+
+                    // Create a container for issue description
+                    const issueDescriptionContainer = document.createElement('div');
+                    issueDescriptionContainer.classList.add('issue-description');
+
+                    // Create card content for issue description
+                    const issueDescription = document.createElement('p');
+                    issueDescription.textContent = `Issue Description: ${ticket.issueDescription}`;
+
+                    // Append issue description to its container
+                    issueDescriptionContainer.appendChild(issueDescription);
+
+                    // Append the colored circle and both containers to the card
+                    card.appendChild(importanceCircle); // Add the colored circle
+                    card.appendChild(ticketDetailsContainer);
+                    card.appendChild(issueDescriptionContainer);
+
+                    // Append the card to the container
+                    ticketContainer.appendChild(card);
+                });
+            }
+
+            // Add event listeners to the importanceSelect and searchInput elements to update displayed tickets
+            importanceSelect.addEventListener('change', updateDisplayedTickets);
+            searchInput.addEventListener('input', updateDisplayedTickets);
+
+            // Call the function to initially display tickets (show all color issues by default)
+            updateDisplayedTickets();
         }
 
         // Call the function to display tickets when the page loads
