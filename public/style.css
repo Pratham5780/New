@@ -285,6 +285,9 @@ button:hover{
     border: none;
     cursor: pointer;
 }
+.revoke-button:hover{
+    background-color: #d11a2a;
+}
 
 .popup {
     display: none;
@@ -341,4 +344,7 @@ button:hover{
     font-style: italic;
     font-weight: 300;
     background-color: lightgreen;
+    padding: 0px 10px;
+    border: 0.5px solid black;
+    border-radius: 5px;
 }

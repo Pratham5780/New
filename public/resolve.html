@@ -119,6 +119,9 @@
                     const remarks = document.createElement('p');
                     remarks.innerHTML = `Remarks: ${ticket.remarks}`;
 
+                    const star = document.createElement('p');
+                    star.textContent = '|';
+
                     // Append content to their respective containers
                     mainInfoContainer.appendChild(ticketID);
                     mainInfoContainer.appendChild(courseName);
@@ -129,6 +132,7 @@
                     issueDescriptionContainer.appendChild(issueDescription);
 
                     remarksContainer.appendChild(resolveDateTime);
+                    remarksContainer.appendChild(star);
                     remarksContainer.appendChild(remarks);
 
                     // Append containers to the card
