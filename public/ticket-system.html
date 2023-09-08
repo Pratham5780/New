@@ -16,7 +16,7 @@
             <h1>DigiGrowHub Ticket System</h1>
             <div class="nav-btn">
                 <a href="issues.html"><button id="issueButton">Tickets</button></a>
-                <button id="resolvedIssueButton">Resolved</button>
+                <a href="resolve.html"><button id="resolvedIssueButton">Resolved</button></a>
                 <a href="student-portal.html"><button id="ticketSystemButton">Student Portal</button></a>
             </div>
         </div>
@@ -33,8 +33,6 @@
 
     <!-- Display Student Details or "No Results Found" Message -->
     <div id="studentDetailsContainer"></div>
-    <div id="issueCardsContainer"></div>
-
     <!-- Add Ticket Button -->
     <button id="addTicketButton" style="display: none;">Add Ticket</button>
 
@@ -54,23 +52,27 @@
             <div class="color-selection">
                 <label class="color-label">
                     <input type="radio" name="importance" value="Red">
-                    <span class="color-circle red"></span> <i class="fa-solid fa-circle" style="color: #ff0000;"></i>
+                    <span class="color-circle red"></span>Urgent
                 </label>
 
                 <label class="color-label">
                     <input type="radio" name="importance" value="Yellow">
-                    <span class="color-circle yellow"></span> <i class="fa-solid fa-circle" style="color: #ffc800;"></i>
+                    <span class="color-circle yellow"></span>Important
                 </label>
 
                 <label class="color-label">
                     <input type="radio" name="importance" value="Green">
-                    <span class="color-circle green"></span> <i class="fa-solid fa-circle" style="color: #009e12;"></i>
+                    <span class="color-circle green"></span>Minor
                 </label>
             </div>
 
             <button type="submit">Submit</button>
         </form>
     </div>
+
+    <div id="issueCardsContainer"></div>
+    <div id="resolvedIssueCardsContainer"></div>
+
 
     <script src="https://kit.fontawesome.com/a8cf255646.js" crossorigin="anonymous"></script>
     <script>
@@ -126,6 +128,7 @@
                         // Attach the student's name to the "Add Ticket" button
                         addTicketButton.dataset.studentName = studentName;
                         displayIssueCards(phoneNumber);
+                        displayResolvedIssueCards(phoneNumber); // Add this line to display resolved issues
                     } else {
                         displayNoResultsMessage();
                         addTicketButton.style.display = "none"; // Hide the "Add Ticket" button
@@ -147,17 +150,46 @@
                 const issueData = await issueResponse.json();
 
                 const issueCardsContainer = document.getElementById('issueCardsContainer');
+                const resolvedIssueCardsContainer = document.getElementById('resolvedIssueCardsContainer'); // Add this line
+
                 issueCardsContainer.innerHTML = ''; // Clear previous issue cards
+                resolvedIssueCardsContainer.innerHTML = ''; // Clear previous resolved issue cards
+
                 issueData.sort((a, b) => new Date(b.submissionDateTime) - new Date(a.submissionDateTime));
 
                 if (issueResponse.ok && issueData.length > 0) {
                     issueData.forEach((issue) => {
-                        const issueCard = createIssueCard(issue);
-                        issueCardsContainer.appendChild(issueCard);
+                        if (issue.resolved) { // Check if the issue is resolved
+                            const resolvedIssueCard = createResolvedIssueCard(issue); // Create resolved issue card
+                            resolvedIssueCardsContainer.appendChild(resolvedIssueCard); // Append to resolved issues container
+                        } else {
+                            const issueCard = createIssueCard(issue);
+                            issueCardsContainer.appendChild(issueCard);
+                        }
                     });
                 }
             } catch (error) {
                 console.error('Error fetching issue data:', error);
+            }
+        }
+
+        async function displayResolvedIssueCards(phoneNumber) {
+            try {
+                const resolvedIssueResponse = await fetch('/getResolvedIssuesByPhoneNumber?phoneNumber=' + phoneNumber);
+                const resolvedIssueData = await resolvedIssueResponse.json();
+
+                const resolvedIssueCardsContainer = document.getElementById('resolvedIssueCardsContainer');
+
+                resolvedIssueCardsContainer.innerHTML = ''; // Clear previous resolved issue cards
+
+                if (resolvedIssueResponse.ok && resolvedIssueData.length > 0) {
+                    resolvedIssueData.forEach((resolvedIssue) => {
+                        const resolvedIssueCard = createResolvedIssueCard(resolvedIssue);
+                        resolvedIssueCardsContainer.appendChild(resolvedIssueCard);
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching resolved issue data:', error);
             }
         }
 
@@ -175,7 +207,7 @@
             ticketID.textContent = `Ticket ID: ${issue.ticketID}`;
 
             const timestamp = document.createElement('p');
-            timestamp.textContent = `${new Date(issue.submissionDateTime).toLocaleString()}`;
+            timestamp.textContent = `Submitted: ${new Date(issue.submissionDateTime).toLocaleString()}`;
 
             const revokeButton = document.createElement('button');
             const revokeIcon = document.createElement('i');
@@ -205,6 +237,45 @@
             return issueCard;
         }
 
+        function createResolvedIssueCard(issue) {
+            const resolvedIssueCard = document.createElement('div');
+            resolvedIssueCard.classList.add('issue-card');
+
+            // Create a container div for ticket_id and timestamp
+            const infoContainer = document.createElement('div');
+            infoContainer.classList.add('issue-info-container');
+
+            const remarkContainer = document.createElement('div');
+            remarkContainer.classList.add('remarks-container');
+
+            // Create elements for ticket_id and timestamp
+            const ticketID = document.createElement('p');
+            ticketID.textContent = `Ticket ID: ${issue.ticketID}`;
+
+            const timestamp = document.createElement('p');
+            timestamp.textContent = `Resolved: ${new Date(issue.submissionDateTime).toLocaleString()}`;
+
+            // You can customize the card structure based on your requirements
+            // Here, we'll assume an issue has a description
+            const description = document.createElement('p');
+            description.textContent = `Issue Description: ${issue.issueDescription}`;
+
+            const remarks = document.createElement('p');
+            remarks.textContent = `Remarks: ${issue.remarks}`;
+
+            // Append ticket_id and timestamp elements to the info container
+            infoContainer.appendChild(ticketID);
+            infoContainer.appendChild(timestamp);
+            remarkContainer.appendChild(remarks);
+
+            // Append the info container and description to the resolved issue card
+            resolvedIssueCard.appendChild(infoContainer);
+            resolvedIssueCard.appendChild(description);
+            resolvedIssueCard.appendChild(remarkContainer);
+
+            return resolvedIssueCard;
+        }
+
         async function revokeIssue(ticketID) {
             try {
                 const response = await fetch('/revokeTicket', {
@@ -230,7 +301,6 @@
                 // Handle errors or display a message to the user
             }
         }
-
 
         ticketForm.addEventListener("submit", async function (event) {
             event.preventDefault();

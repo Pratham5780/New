@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resolved Tickets Page</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Navigation Header -->
+    <div class="nav">
+        <div class="header">
+            <img src="https://digigrowhub.in/wp-content/uploads/2021/10/digi-new.png" alt="">
+            <a href="index.html"><i class="fa-solid fa-house" style="color: #fff"></i></a>
+            <h1>DigiGrowHub Resolved Tickets</h1>
+            <div class="nav-btn">
+                <a href="issues.html"><button id="issueButton">Tickets</button></a>
+                <a href="student-portal.html"><button id="ticketSystemButton">Student Portal</button></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Importance Filter Dropdown -->
+    <div class="filter-container">
+        <div class="filter">
+            <label for="searchInput">Search:</label>
+            <input type="text" id="searchInput" placeholder="Enter Phone/Ticket ID">
+        </div>
+    </div>
+
+    <!-- Resolved Ticket Cards Container -->
+    <div id="resolvedTicketContainer">
+        <!-- Resolved ticket cards will be added here dynamically -->
+    </div>
+
+    <script src="https://kit.fontawesome.com/a8cf255646.js" crossorigin="anonymous"></script>
+    <script>
+        // Function to fetch resolved ticket data from the server
+        async function fetchResolvedTickets() {
+            try {
+                const response = await fetch('/getResolvedTickets'); // Replace with your actual endpoint
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching resolved tickets:', error);
+                return [];
+            }
+        }
+
+        // Function to display resolved ticket cards
+        async function displayResolvedTickets() {
+            const resolvedTickets = await fetchResolvedTickets();
+            const resolvedTicketContainer = document.getElementById('resolvedTicketContainer');
+            const searchInput = document.getElementById('searchInput');
+
+            // Function to filter resolved tickets by search input
+            function filterResolvedTicketsBySearchInput(input) {
+                return resolvedTickets.filter((ticket) =>
+                    ticket.phoneNumber.includes(input) ||
+                    ticket.ticketID.endsWith(input)
+                );
+            }
+
+            // Function to update the displayed resolved tickets
+            function updateDisplayedResolvedTickets() {
+                const searchValue = searchInput.value.trim().toLowerCase();
+
+                let filteredResolvedTickets = resolvedTickets;
+
+                if (searchValue !== '') {
+                    filteredResolvedTickets = filterResolvedTicketsBySearchInput(searchValue);
+                }
+
+                filteredResolvedTickets.sort((a, b) => new Date(b.resolvedDateTime) - new Date(a.resolvedDateTime));
+                // Clear the resolved ticket container
+                resolvedTicketContainer.innerHTML = '';
+
+                filteredResolvedTickets.forEach((ticket) => {
+                    // Create a card element
+                    const card = document.createElement('div');
+                    card.classList.add('ticket-card');
+
+                    // Create containers for different pieces of information
+                    const mainInfoContainer = document.createElement('div');
+                    mainInfoContainer.classList.add('main-info-container');
+
+                    const issueDescriptionContainer = document.createElement('div');
+                    issueDescriptionContainer.classList.add('issue-description-container');
+
+                    const remarksContainer = document.createElement('div');
+                    remarksContainer.classList.add('remarks-container');
+
+                    // Create card content for different pieces of information
+                    const ticketID = document.createElement('p');
+                    ticketID.innerHTML = `Ticket ID: ${ticket.ticketID}`;
+
+                    const courseName = document.createElement('p');
+                    courseName.textContent = `Course Name: ${ticket.courseSelection}`;
+
+                    const studentName = document.createElement('p');
+                    studentName.textContent = `Name: ${ticket.studentName}`;
+
+                    const phoneNumber = document.createElement('p');
+                    phoneNumber.textContent = `Phone Number: ${ticket.phoneNumber}`;
+
+                    const submissionDateTime = document.createElement('p');
+                    const submittedDate = new Date(ticket.submissionDateTime);
+                    submissionDateTime.textContent = `Submitted: ${submittedDate.toLocaleString()}`;
+
+                    const resolveDateTime = document.createElement('p');
+                    const resolveDate = new Date(ticket.resolvedDateTime);
+                    resolveDateTime.innerHTML = `Resolved: ${resolveDate.toLocaleString()}`;
+
+                    const issueDescription = document.createElement('p');
+                    issueDescription.innerHTML = `Issue Description: ${ticket.issueDescription}`;
+
+                    const remarks = document.createElement('p');
+                    remarks.innerHTML = `Remarks: ${ticket.remarks}`;
+
+                    // Append content to their respective containers
+                    mainInfoContainer.appendChild(ticketID);
+                    mainInfoContainer.appendChild(courseName);
+                    mainInfoContainer.appendChild(studentName);
+                    mainInfoContainer.appendChild(phoneNumber);
+                    mainInfoContainer.appendChild(submissionDateTime);
+
+                    issueDescriptionContainer.appendChild(issueDescription);
+
+                    remarksContainer.appendChild(resolveDateTime);
+                    remarksContainer.appendChild(remarks);
+
+                    // Append containers to the card
+                    card.appendChild(mainInfoContainer);
+                    card.appendChild(issueDescriptionContainer);
+                    card.appendChild(remarksContainer);
+
+                    // Append the card to the resolved ticket container
+                    resolvedTicketContainer.appendChild(card);
+                });
+            }
+
+            // Add event listener to the searchInput element to update displayed resolved tickets
+            searchInput.addEventListener('input', updateDisplayedResolvedTickets);
+
+            // Call the function to initially display resolved tickets
+            updateDisplayedResolvedTickets();
+        }
+
+        // Call the function to display resolved tickets when the page loads
+        window.addEventListener('load', displayResolvedTickets);
+    </script>
+</body>
+
+</html>

@@ -50,10 +50,24 @@ const ticketSchema = new mongoose.Schema({
     submissionDateTime: { type: Date, default: Date.now }, // Store the date as a Date type
 });
 
+const resolvedTicketSchema = new mongoose.Schema({
+    ticketID: String,
+    studentName: String,
+    phoneNumber: String,
+    issueDescription: String,
+    courseSelection: String,
+    importance: String,
+    submissionDateTime: Date,
+    resolvedDateTime: Date,
+    remarks: String, // Add a field for remarks
+});
+
 const Event = mongoose.model("StudentTrainee", eventSchema);
 const Trainee = mongoose.model("Trainee", traineeSchema);
 const Student = mongoose.model("Student", studentSchema);
 const Ticket = mongoose.model("Ticket", ticketSchema); 
+const ResolvedTicket = mongoose.model('ResolvedTicket', resolvedTicketSchema);
+
 
 app.use(express.static("public"));
 app.use(express.json());
@@ -339,6 +353,58 @@ app.post('/revokeTicket', async (req, res) => {
     }
 });
 
+app.post('/moveToResolved', async (req, res) => {
+    try {
+        const { ticket, remarks } = req.body;
+
+        // Remove the ticket from the current database
+        await Ticket.findOneAndDelete({ ticketID: ticket.ticketID });
+
+        // Save the ticket to the resolved database (create a new schema and model for resolved tickets)
+        const resolvedTicket = new ResolvedTicket({
+            ticketID: ticket.ticketID,
+            studentName: ticket.studentName,
+            phoneNumber: ticket.phoneNumber,
+            issueDescription: ticket.issueDescription,
+            courseSelection: ticket.courseSelection,
+            importance: 'Blue',
+            submissionDateTime: ticket.submissionDateTime,
+            resolvedDateTime: new Date(),
+            remarks,
+        });
+
+        await resolvedTicket.save();
+
+        res.status(200).json({ message: 'Ticket moved to resolved successfully' });
+    } catch (error) {
+        console.error('Error moving ticket to resolved:', error);
+        res.status(500).json({ error: 'An error occurred' });
+    }
+});
+
+app.get("/getResolvedTickets", async (req, res) => {
+    try {
+        const resolvedTickets = await ResolvedTicket.find();
+        res.status(200).json(resolvedTickets);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("An error occurred");
+    }
+});
+
+app.get('/getResolvedIssuesByPhoneNumber', async (req, res) => {
+    try {
+      const { phoneNumber } = req.query;
+      
+      // Replace with your database query logic to fetch resolved tickets by phone number
+      const resolvedTickets = await ResolvedTicket.find({ phoneNumber });
+      
+      res.json(resolvedTickets);
+    } catch (error) {
+      console.error('Error fetching resolved tickets:', error);
+      res.status(500).json({ error: 'An error occurred while fetching resolved tickets' });
+    }
+  });
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

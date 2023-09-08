@@ -15,7 +15,7 @@
             <a href="index.html"><i class="fa-solid fa-house" style="color: #fff"></i></a>
             <h1>DigiGrowHub Ticket</h1>
             <div class="nav-btn">
-                <button id="resolvedIssueButton">Resolved</button>
+                <a href="resolve.html"><button id="resolvedIssueButton">Resolved</button></a>
                 <a href="student-portal.html"><button id="ticketSystemButton">Student Portal</button></a>
             </div>
         </div>
@@ -43,6 +43,17 @@
         <!-- Ticket cards will be added here dynamically -->
     </div>
 
+    <!-- Popup for Remarks -->
+    <div id="remarksPopup" class="popup">
+        <div class="popup-content">
+            <span class="close-popup" id="closeRemarksPopup">&times;</span>
+            <h2>Add Remarks</h2>
+            <textarea id="remarksTextArea" rows="4" placeholder="Enter remarks..."></textarea>
+            <button id="saveRemarksButton">Save</button>
+        </div>
+    </div>
+
+
     <script src="https://kit.fontawesome.com/a8cf255646.js" crossorigin="anonymous"></script>
     <script>
         // Function to fetch ticket data from the server
@@ -55,6 +66,64 @@
                 console.error('Error fetching tickets:', error);
                 return [];
             }
+        }
+
+        function createDoneButton(card, ticket) {
+            const doneButton = document.createElement('button');
+            doneButton.innerHTML = '<i class="fa-solid fa-check"></i>';
+            doneButton.classList.add('done-button');
+
+            doneButton.addEventListener('click', () => {
+                openRemarksPopup(ticket);
+            });
+
+            card.appendChild(doneButton);
+        }
+
+        function openRemarksPopup(ticket) {
+            const remarksPopup = document.getElementById('remarksPopup');
+            const closeRemarksPopup = document.getElementById('closeRemarksPopup');
+            const remarksTextArea = document.getElementById('remarksTextArea');
+            const saveRemarksButton = document.getElementById('saveRemarksButton');
+
+            // Show the popup
+            remarksPopup.style.display = 'block';
+
+            // Close the popup when the close button is clicked
+            closeRemarksPopup.addEventListener('click', () => {
+                remarksPopup.style.display = 'none';
+            });
+
+            // Save the remarks and move the ticket to the resolved database when the save button is clicked
+            saveRemarksButton.addEventListener('click', async () => {
+                const remarks = remarksTextArea.value;
+
+                // Send the remarks and ticket data to the server to move it to the resolved database
+                const response = await fetch('/moveToResolved', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        ticket,
+                        remarks,
+                    }),
+                });
+
+                if (response.ok) {
+                    // Remove the card from the current container
+                    const ticketContainer = document.getElementById('ticketContainer');
+                    const cardToRemove = ticketContainer.querySelector(`[data-ticket-id="${ticket.ticketID}"]`);
+                    if (cardToRemove) {
+                        cardToRemove.remove();
+                    }
+
+                    // Close the popup
+                    remarksPopup.style.display = 'none';
+                } else {
+                    console.error('Error moving ticket to resolved:', response.statusText);
+                }
+            });
         }
 
         // Function to display ticket cards sorted by submission date and filtered by importance
@@ -81,6 +150,7 @@
             }
 
             // Function to update the displayed tickets
+            // Function to update the displayed tickets
             function updateDisplayedTickets() {
                 const selectedImportance = importanceSelect.value;
                 const searchValue = searchInput.value.trim().toLowerCase();
@@ -98,6 +168,7 @@
                     // Create a card element
                     const card = document.createElement('div');
                     card.classList.add('ticket-card');
+                    card.setAttribute('data-ticket-id', ticket.ticketID); // Add a data attribute for identifying the card
 
                     // Create a circle element based on importance
                     const importanceCircle = document.createElement('div');
@@ -150,10 +221,13 @@
                     // Append issue description to its container
                     issueDescriptionContainer.appendChild(issueDescription);
 
+                    // Add the "Done" button
+
                     // Append the colored circle and both containers to the card
                     card.appendChild(importanceCircle); // Add the colored circle
                     card.appendChild(ticketDetailsContainer);
                     card.appendChild(issueDescriptionContainer);
+                    createDoneButton(card, ticket);
 
                     // Append the card to the container
                     ticketContainer.appendChild(card);
