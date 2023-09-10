@@ -36,8 +36,14 @@ const traineeSchema = new mongoose.Schema({
 const studentSchema = new mongoose.Schema({
     studentName: String,
     courseEnrolled: String,
-    startDate: String,
     phoneNumber: String,
+    state: String,
+    address: String,
+    email: String,
+    parentsName: String,
+    alternateNo: String,
+    collegeCompany: String,
+    dob: String,
 });
 
 const ticketSchema = new mongoose.Schema({
@@ -62,12 +68,24 @@ const resolvedTicketSchema = new mongoose.Schema({
     remarks: String, // Add a field for remarks
 });
 
+const courseSchema = new mongoose.Schema({
+    courseId: String,
+    courseName: String,
+    instructorName: String,
+    mobileNo: String,
+    email: String,
+    meetingLink: String,
+    syllabus: String,
+    startDate: Date,
+    endDate: Date,
+    fees: String,
+});
 const Event = mongoose.model("StudentTrainee", eventSchema);
 const Trainee = mongoose.model("Trainee", traineeSchema);
 const Student = mongoose.model("Student", studentSchema);
 const Ticket = mongoose.model("Ticket", ticketSchema); 
 const ResolvedTicket = mongoose.model('ResolvedTicket', resolvedTicketSchema);
-
+const Course = mongoose.model('Course', courseSchema);
 
 app.use(express.static("public"));
 app.use(express.json());
@@ -190,30 +208,6 @@ app.get("/trainees", async (req, res) => {
     }
 });
 
-app.post("/submitStudent", async (req, res) => {
-    try {
-        const studentData = req.body;
-
-        if (!studentData.studentName || !studentData.courseEnrolled || !studentData.startDate || !studentData.phoneNumber) {
-            // Check if any required field is missing
-            return res.status(400).send("Missing required fields.");
-        }
-
-        const newStudent = new Student({
-            studentName: studentData.studentName,
-            courseEnrolled: studentData.courseEnrolled,
-            startDate: studentData.startDate,
-            phoneNumber: studentData.phoneNumber,
-        });
-
-        await newStudent.save();
-
-        res.status(200).send("Student data inserted successfully.");
-    } catch (error) {
-        console.error("Error submitting student data:", error);
-        res.status(500).send("An error occurred while submitting student data.");
-    }
-});
 app.get("/students", async (req, res) => {
     try {
         const students = await Student.find();
@@ -405,6 +399,113 @@ app.get('/getResolvedIssuesByPhoneNumber', async (req, res) => {
       res.status(500).json({ error: 'An error occurred while fetching resolved tickets' });
     }
   });
+
+  // Endpoint to submit a new course
+app.post('/submit-course', async (req, res) => {
+    try {
+        const courseData = req.body;
+        const course = new Course(courseData);
+        await course.save();
+        res.status(201).json({ message: 'Course added successfully' });
+    } catch (error) {
+        console.error('Error adding course:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Endpoint to get all courses
+app.get('/courses', async (req, res) => {
+    try {
+        const courses = await Course.find();
+        res.json(courses);
+    } catch (error) {
+        console.error('Error getting courses:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Endpoint to delete a course by ID
+app.delete('/delete-course/:id', async (req, res) => {
+    try {
+        const courseId = req.params.id;
+        await Course.findByIdAndDelete(courseId);
+        res.json({ message: 'Course deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting course:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Endpoint to update a course by ID
+app.patch('/edit-course/:id', async (req, res) => {
+    try {
+        const courseId = req.params.id;
+        const updatedData = req.body;
+        await Course.findByIdAndUpdate(courseId, updatedData);
+        res.json({ message: 'Course updated successfully' });
+    } catch (error) {
+        console.error('Error updating course:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.get("/getCourses", async (req, res) => {
+    try {
+        // Fetch courses from the database
+        const courses = await Course.find();
+
+        // Return the courses as JSON
+        res.status(200).json(courses);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "An error occurred" });
+    }
+});
+
+
+app.post("/submitStudent", async (req, res) => {
+    try {
+        const studentData = req.body;
+        // Create a new Student document
+        const newStudent = new Student({
+            studentName: studentData.studentName,
+            courseEnrolled: studentData.courseEnrolled,
+            phoneNumber: studentData.phoneNumber,
+            state: studentData.state,
+            address: studentData.address,
+            email: studentData.email,
+            parentsName: studentData.parentsName,
+            alternateNo: studentData.alternateNo,
+            collegeCompany: studentData.collegeCompany,
+            dob: studentData.dob,
+        });
+
+        // Save the new Student document to the database
+        await newStudent.save();
+
+        res.status(200).send("Student data inserted successfully.");
+    } catch (error) {
+        console.error("Error submitting student data:", error);
+        res.status(500).send("An error occurred while submitting student data.");
+    }
+});
+
+app.get('/getStudentAndCourseData', async (req, res) => {
+    try {
+        // Fetch student data from the Student model
+        const students = await Student.find();
+
+        // Fetch course data from the Course model
+        const courses = await Course.find();
+
+        // Return both student and course data as JSON
+        res.status(200).json({ students, courses });
+    } catch (error) {
+        console.error('Error fetching student and course data:', error);
+        res.status(500).json({ error: 'An error occurred while fetching data.' });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

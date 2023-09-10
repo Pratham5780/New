@@ -29,109 +29,213 @@
             <input type="text" id="studentName" name="studentName" required><br>
 
             <label for="courseEnrolled">Course Enrolled:</label>
-            <input type="text" id="courseEnrolled" name="courseEnrolled" required><br>
-
-            <label for="startDate">Start Date:</label>
-            <input type="date" id="startDate" name="startDate" required><br>
+            <select id="courseEnrolled" name="courseEnrolled">
+                <!-- Options for course selection will be inserted here -->
+            </select><br>
 
             <label for="phoneNumber">Phone Number:</label>
             <input type="tel" id="phoneNumber" name="phoneNumber" required><br>
+
+            <label for="state">State:</label>
+            <input type="text" id="state" name="state" required><br>
+
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" required><br>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br>
+
+            <label for="parentsName">Parents Name:</label>
+            <input type="text" id="parentsName" name="parentsName" required><br>
+
+            <label for="alternateNo">Alternate No.:</label>
+            <input type="tel" id="alternateNo" name="alternateNo" required><br>
+
+            <label for="collegeCompany">College/Company Name:</label>
+            <input type="text" id="collegeCompany" name="collegeCompany" required><br>
+
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" name="dob" required><br>
 
             <button type="submit">Submit</button>
         </form>
     </div>
 
-    <div id="studentTableContainer">
-        <table id="studentTable">
-            <thead>
-                <tr>
+    <div id="studentDataDisplay">
+        <table id="studentDataTable">
+            <tr>
+                <thead>
                     <th>Name</th>
                     <th>Course Enrolled</th>
-                    <th>Start Date</th>
                     <th>Phone Number</th>
-                </tr>
-            </thead>
-            <tbody id="studentTableBody">
-                <!-- Data rows will be inserted here -->
-            </tbody>
+                    <th>State</th>
+                    <th>Address</th>
+                    <th>Email</th>
+                    <th>Parents Name</th>
+                    <th>Alternate No.</th>
+                    <th>College/Company Name</th>
+                    <th>Date of Birth</th>
+                    <th>Instructor Name</th>
+                    <th>Syllabus Link</th>
+                    <th>Meeting Link</th>
+                    <th>Fees</th>
+                </thead>
+            </tr>
         </table>
     </div>
 
     <script src="https://kit.fontawesome.com/a8cf255646.js" crossorigin="anonymous"></script>
     <script>
-        const addStudentButton = document.getElementById("addStudentButton");
         const studentFormContainer = document.getElementById("studentFormContainer");
+        const addStudentButton = document.getElementById("addStudentButton");
         const studentForm = document.getElementById("studentForm");
-        const studentTableBody = document.getElementById("studentTableBody");
 
-        addStudentButton.addEventListener("click", function () {
-            const isVisible = studentFormContainer.style.display === "block";
-            if (isVisible) {
-                studentFormContainer.style.display = "none";
-            } else {
-                studentFormContainer.style.display = "block";
-            }
-        });
+        const studentDataDisplay = document.getElementById("studentDataDisplay");
+        const studentDataTable = document.getElementById("studentDataTable");
 
-        studentForm.addEventListener("submit", async function (event) {
-            event.preventDefault();
-
-            const formData = new FormData(studentForm);
-            const formDataObject = {
-                studentName: formData.get("studentName"),
-                courseEnrolled: formData.get("courseEnrolled"),
-                startDate: formData.get("startDate"),
-                phoneNumber: formData.get("phoneNumber"),
-            };
-
+        async function addStudent(studentData) {
             try {
                 const response = await fetch("/submitStudent", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(formDataObject),
+                    body: JSON.stringify(studentData),
                 });
 
+                // Handle the response here
                 if (response.ok) {
-                    studentFormContainer.style.display = "none";
-                    loadStudents();
-                    studentForm.reset(); // Reset the form
+                    // Handle success
+                    window.location.reload();
                 } else {
-                    console.error("Error submitting student data.");
+                    // Handle error
+                    console.error("Error adding student data.");
                 }
             } catch (error) {
-                console.error("An error occurred while submitting student data.", error);
-            }
-        });
-
-        async function loadStudents() {
-            try {
-                const response = await fetch("/students");
-                const studentData = await response.json();
-
-                studentTableBody.innerHTML = ""; // Clear the existing table rows
-
-                studentData.forEach((student) => {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${student.studentName}</td>
-                        <td>${student.courseEnrolled}</td>
-                        <td>${student.startDate}</td>
-                        <td>${student.phoneNumber}</td>
-                    `;
-
-                    studentTableBody.appendChild(row);
-                });
-
-                const studentTableContainer = document.getElementById("studentTableContainer");
-                studentTableContainer.style.display = "block";
-            } catch (error) {
-                console.error("Error loading students:", error);
+                console.error("An error occurred while adding student data:", error);
             }
         }
 
-        loadStudents();
+        // Add an event listener to the form submission
+        document.getElementById("studentForm").addEventListener("submit", async function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Capture form data and create the studentData object
+            const studentData = {
+                studentName: document.getElementById("studentName").value,
+                courseEnrolled: document.getElementById("courseEnrolled").value,
+                phoneNumber: document.getElementById("phoneNumber").value,
+                state: document.getElementById("state").value,
+                address: document.getElementById("address").value,
+                email: document.getElementById("email").value,
+                parentsName: document.getElementById("parentsName").value,
+                alternateNo: document.getElementById("alternateNo").value,
+                collegeCompany: document.getElementById("collegeCompany").value,
+                dob: document.getElementById("dob").value,
+            };
+
+            // Call the addStudent function with the studentData
+            await addStudent(studentData); // Use 'await' to handle async operation
+        });
+
+        async function fetchData() {
+            try {
+                const response = await fetch("/getStudentAndCourseData");
+                if (response.ok) {
+                    const data = await response.json();
+                    const students = data.students;
+                    const courses = data.courses;
+                    displayStudentData(students, courses);
+                } else {
+                    console.error("Error fetching data.");
+                }
+            } catch (error) {
+                console.error("An error occurred while fetching data.", error);
+            }
+        }
+
+        function displayStudentData(students, courses) {
+            students.forEach((student) => {
+                const course = courses.find((c) => c.courseName === student.courseEnrolled);
+                if (course) {
+                    const row = studentDataTable.insertRow(-1);
+                    const cellName = row.insertCell(0);
+                    const cellCourse = row.insertCell(1);
+                    const cellPhone = row.insertCell(2);
+                    const cellState = row.insertCell(3);
+                    const cellAddress = row.insertCell(4);
+                    const cellEmail = row.insertCell(5);
+                    const cellParentsName = row.insertCell(6);
+                    const cellAlternateNo = row.insertCell(7);
+                    const cellCollegeCompany = row.insertCell(8);
+                    const cellDOB = row.insertCell(9);
+                    const cellInstructor = row.insertCell(10);
+                    const cellSyllabusLink = row.insertCell(11);
+                    const cellMeetingLink = row.insertCell(12);
+                    const cellFees = row.insertCell(13);
+
+                    cellName.innerHTML = student.studentName;
+                    cellCourse.innerHTML = student.courseEnrolled;
+                    cellPhone.innerHTML = student.phoneNumber;
+                    cellState.innerHTML = student.state;
+                    cellAddress.innerHTML = student.address;
+                    cellEmail.innerHTML = student.email;
+                    cellParentsName.innerHTML = student.parentsName;
+                    cellAlternateNo.innerHTML = student.alternateNo;
+                    cellCollegeCompany.innerHTML = student.collegeCompany;
+                    cellDOB.innerHTML = student.dob;
+                    cellInstructor.innerHTML = course.instructorName;
+                    cellSyllabusLink.innerHTML = `<a href="${course.syllabus}" target="_blank">Syllabus Link</a>`;
+                    cellMeetingLink.innerHTML = `<a href="${course.meetingLink}" target="_blank">Meeting Link</a>`;
+                    cellFees.innerHTML = course.fees;
+                }
+            });
+        }
+
+        // Fetch and display data when the page loads
+        fetchData();
+
+        // Show the add student form when the button is clicked
+        addStudentButton.addEventListener("click", () => {
+            studentFormContainer.style.display = "block";
+        });
+        // Function to fetch course data from the server
+        async function fetchCourses() {
+            try {
+                const response = await fetch("/getCourses"); // Replace with the actual endpoint to fetch course data
+                if (response.ok) {
+                    const courses = await response.json();
+                    return courses;
+                } else {
+                    console.error("Error fetching course data. Status:", response.status);
+                    return []; // Return an empty array in case of an error
+                }
+            } catch (error) {
+                console.error("An error occurred while fetching course data.", error);
+                return []; // Return an empty array in case of an error
+            }
+        }
+
+        // Function to populate the course dropdown
+        async function populateCourseDropdown() {
+            const courseSelect = document.getElementById("courseEnrolled");
+
+            try {
+                const courses = await fetchCourses();
+                for (const course of courses) {
+                    const option = document.createElement("option");
+                    option.value = course.courseName;
+                    option.textContent = course.courseName;
+                    courseSelect.appendChild(option);
+                }
+            } catch (error) {
+                console.error("An error occurred while populating the course dropdown:", error);
+            }
+        }
+
+        // Call the populateCourseDropdown function when the page loads
+        window.addEventListener('load', populateCourseDropdown);
+
     </script>
 </body>
 

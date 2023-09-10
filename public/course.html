@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="nav">
+        <div class="header">
+            <img src="https://digigrowhub.in/wp-content/uploads/2021/10/digi-new.png" alt="">
+            <a href="index.html"><i class="fa-solid fa-house" style="color: #fff"></i></a>
+            <h1>DigiGrowHub Course List</h1>
+            <div class="nav-btn">
+                <a href="student-portal.html"><button id="studentPortalButton">Student Portal</button></a>
+                <button id="addButton">Add Course</button>
+            </div>
+        </div>
+    </div>
+    <div id="formContainer" style="display: none;">
+        <h2>Add New Course</h2>
+        <div id="loader" style="display: none;">
+            <div class="loader"></div>
+        </div>
+        <form id="courseForm">
+            <label for="courseId">Course ID:</label>
+            <input type="text" id="courseId" name="courseId" required><br>
+
+            <label for="courseName">Course Name:</label>
+            <input type="text" id="courseName" name="courseName" required><br>
+
+            <label for="instructorName">Instructor Name:</label>
+            <input type="text" id="instructorName" name="instructorName" required><br>
+
+            <label for="mobileNo">Mobile No.:</label>
+            <input type="tel" id="mobileNo" name="mobileNo" required><br>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br>
+
+            <label for="meetingLink">Meeting Link:</label>
+            <input type="url" id="meetingLink" name="meetingLink" required><br>
+
+            <label for="syllabus">Syllabus:</label>
+            <input type="url" id="syllabus" name="syllabus" required><br>
+
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate" name="startDate" required><br>
+
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate" name="endDate" required><br>
+
+            <label for="fees">Fees:</label>
+            <input type="text" id="fees" name="fees" required><br>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <div id="editFormContainer" style="display: none;">
+        <h2>Edit Course</h2>
+        <form id="editForm">
+            <label for="editCourseName">Course Name:</label>
+            <input type="text" id="editCourseName" name="editCourseName" required><br>
+
+            <label for="editInstructorName">Instructor Name:</label>
+            <input type="text" id="editInstructorName" name="editInstructorName" required><br>
+
+            <label for="editMobileNo">Mobile No.:</label>
+            <input type="tel" id="editMobileNo" name="editMobileNo" required><br>
+
+            <label for="editEmail">Email:</label>
+            <input type="email" id="editEmail" name="editEmail" required><br>
+
+            <label for="editMeetingLink">Meeting Link:</label>
+            <input type="url" id="editMeetingLink" name="editMeetingLink" required><br>
+
+            <label for="editSyllabus">Syllabus:</label>
+            <input type="url" id="editSyllabus" name="editSyllabus" required><br>
+
+            <label for="editStartDate">Start Date:</label>
+            <input type="date" id="editStartDate" name="editStartDate" required><br>
+
+            <label for="editEndDate">End Date:</label>
+            <input type="date" id="editEndDate" name="editEndDate" required><br>
+
+            <label for="editFees">Fees:</label>
+            <input type="text" id="editFees" name="editFees" required><br>
+
+            <button class="updateButton" type="submit">Update</button>
+        </form>
+    </div>
+
+    <div id="courseTableContainer">
+        <table id="courseTable">
+            <thead>
+                <tr>
+                    <th>Course ID</th>
+                    <th>Course Name</th>
+                    <th>Instructor Name</th>
+                    <th>Mobile No.</th>
+                    <th>Email</th>
+                    <th>Meeting Link</th>
+                    <th>Syllabus</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Fees</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="courseTableBody">
+                <!-- Data rows will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+    <script src="https://kit.fontawesome.com/a8cf255646.js" crossorigin="anonymous"></script>
+    <script>
+        const addButton = document.getElementById("addButton");
+        const formContainer = document.getElementById("formContainer");
+        const editFormContainer = document.getElementById('editFormContainer');
+        const courseForm = document.getElementById("courseForm");
+        const courseTableBody = document.getElementById('courseTableBody');
+        const updateButton = document.getElementsByClassName("updateButton");
+
+        addButton.addEventListener("click", function () {
+            const isVisible = addButton.getAttribute("data-visible") === "true";
+            if (isVisible) {
+                formContainer.style.display = "none";
+                editFormContainer.style.display = "none";
+                addButton.setAttribute("data-visible", "false");
+            } else {
+                formContainer.style.display = "block";
+                addButton.setAttribute("data-visible", "true");
+            }
+        });
+
+        courseForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(courseForm);
+            const formDataObject = {
+                courseId: formData.get('courseId'),
+                courseName: formData.get('courseName'),
+                instructorName: formData.get('instructorName'),
+                mobileNo: formData.get('mobileNo'),
+                email: formData.get('email'),
+                meetingLink: formData.get('meetingLink'),
+                syllabus: formData.get('syllabus'),
+                startDate: formData.get('startDate'),
+                endDate: formData.get('endDate'),
+                fees: formData.get('fees')
+            };
+            courseForm.style.display = "none";
+            loader.style.display = "block";
+
+            try {
+                const response = await fetch("/submit-course", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formDataObject),
+                });
+
+                if (response.ok) {
+                    formContainer.style.display = "none";
+                    loadCourses();
+                    courseForm.reset(); // Reset the form
+                    alert("Data added successfully!");
+                } else {
+                    console.error("Error submitting data.");
+                }
+            } catch (error) {
+                console.error("An error occurred while submitting data.", error);
+            } finally {
+                loader.style.display = "none";
+            }
+        });
+
+        function createEditButton(course) {
+            const editButton = document.createElement('button');
+            editButton.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
+            editButton.addEventListener('click', () => openEditForm(course));
+            return editButton;
+        }
+
+        function toggleButtonLoader(button, isLoading) {
+            if (isLoading) {
+                button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+                button.disabled = true;
+            } else {
+                button.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                button.disabled = false;
+            }
+        }
+
+        function createDeleteButton(course) {
+            const deleteButton = document.createElement('button');
+            deleteButton.classList.add('red-button');
+            deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+            deleteButton.addEventListener('click', async () => {
+                toggleButtonLoader(deleteButton, true);
+                try {
+                    const response = await fetch(`/delete-course/${course._id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        loadCourses();
+                    } else {
+                        console.error('Error deleting data.');
+                    }
+                } catch (error) {
+                    console.error('An error occurred while deleting data.', error);
+                } finally {
+                    // Revert the delete button to its normal state
+                    toggleButtonLoader(deleteButton, false);
+                }
+            });
+
+            return deleteButton;
+        }
+
+        async function openEditForm(course) {
+            editFormContainer.style.display = "block";
+
+            const editForm = document.getElementById('editForm');
+            const editCourseName = document.getElementById('editCourseName');
+            const editInstructorName = document.getElementById('editInstructorName');
+            const editMobileNo = document.getElementById('editMobileNo');
+            const editEmail = document.getElementById('editEmail');
+            const editMeetingLink = document.getElementById('editMeetingLink');
+            const editSyllabus = document.getElementById('editSyllabus');
+            const editStartDate = document.getElementById('editStartDate');
+            const editEndDate = document.getElementById('editEndDate');
+            const editFees = document.getElementById('editFees');
+
+            editCourseName.value = course.courseName;
+            editInstructorName.value = course.instructorName;
+            editMobileNo.value = course.mobileNo;
+            editEmail.value = course.email;
+            editMeetingLink.value = course.meetingLink;
+            editSyllabus.value = course.syllabus;
+            editStartDate.value = course.startDate;
+            editEndDate.value = course.endDate;
+            editFees.value = course.fees;
+
+            editForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                toggleButtonLoader(updateButton, true);
+                const updatedData = {
+                    courseName: editCourseName.value,
+                    instructorName: editInstructorName.value,
+                    mobileNo: editMobileNo.value,
+                    email: editEmail.value,
+                    meetingLink: editMeetingLink.value,
+                    syllabus: editSyllabus.value,
+                    startDate: editStartDate.value,
+                    endDate: editEndDate.value,
+                    fees: editFees.value
+                };
+
+                try {
+                    const response = await fetch(`/edit-course/${course._id}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedData)
+                    });
+
+                    if (response.ok) {
+                        editFormContainer.style.display = 'none';
+                        loadCourses();
+                    } else {
+                        console.error('Error updating data.');
+                    }
+                } catch (error) {
+                    console.error('An error occurred while updating data.', error);
+                } finally {
+                    // Revert the "Update" button to its normal state
+                    toggleButtonLoader(updateButton, false);
+                }
+            });
+        }
+
+        const courseTableContainer = document.getElementById('courseTableContainer');
+        const loader = document.getElementById("loader");
+
+        async function loadCourses() {
+            courseTableBody.innerHTML = '';
+
+            try {
+                const response = await fetch('/courses');
+                const courseData = await response.json();
+
+                courseData.forEach((course, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+            <td>${course.courseId}</td>
+            <td>${course.courseName}</td>
+            <td>${course.instructorName}</td>
+            <td>${course.mobileNo}</td>
+            <td>${course.email}</td>
+            <td><a href="${course.meetingLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
+            <td><a href="${course.syllabus}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
+            <td>${formatDate(course.startDate)}</td>
+            <td>${formatDate(course.endDate)}</td>
+            <td>${course.fees}</td>
+            <td></td>
+        `;
+
+                    const editButtonCell = row.querySelector('td:last-child');
+                    const editButton = createEditButton(course);
+                    const deleteButton = createDeleteButton(course);
+                    editButtonCell.appendChild(editButton);
+                    editButtonCell.appendChild(deleteButton);
+
+                    courseTableBody.appendChild(row);
+                });
+
+                courseTableContainer.style.display = 'block';
+            } catch (error) {
+                console.error('Error loading courses:', error);
+            }
+        }
+
+        loadCourses();
+
+        function formatDate(date) {
+            const options = { year: '2-digit', month: '2-digit', day: '2-digit' };
+            return new Date(date).toLocaleDateString('en-GB', options);
+        }
+    </script>
+</body>
+
+</html>
