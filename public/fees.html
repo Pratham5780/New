@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fees - DigiGrowHub Student Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Navbar (same as before) -->
+    <div class="nav">
+        <div class="header">
+            <img src="https://digigrowhub.in/wp-content/uploads/2021/10/digi-new.png" alt="">
+            <div class="nav-btn">
+                <a href="index.html"><i class="fa-solid fa-house" style="color: #fff"></i></a>
+                <a href="course.html"><button>Course List</button></a>
+                <a href="fees.html"><button>Fees Portal</button></a>
+                <a href="ticket-system.html"><button id="ticketSystemButton">Ticket System</button></a>
+                <a href="student-portal.html"><button id="studentPortalButton">Student Portal</button></a>
+                <button id="addButton">Add Class</button>
+                <button id="traineePortalButton">Trainer Panel</button>
+            </div>
+        </div>
+    </div>
+    <!-- Student Data and Fees Table -->
+    <div class="search-container">
+        <input type="text" class="searchbar2" id="searchInput" placeholder="Search...">
+    </div>
+    <div class="FeesContainer">
+        <table id="feesTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Email</th>
+                    <th>Course Enrolled</th>
+                    <th>Join Date</th>
+                    <th>Fees</th>
+                    <th>Discount (%)</th>
+                    <th>Final Fees</th>
+                    <th>Paid Fees</th>
+                    <th>Due Fees</th>
+                    <th>Due Date</th>
+                    <th>Payment ID</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Student and fees data will be inserted here dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal for editing fees -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h3>Edit Fees</h3>
+            <form id="feesForm">
+                <label for="discount">Discount (%)</label>
+                <input type="number" id="discount" name="discount" min="0" max="100" step="1">
+
+                <label for="paidFees">Paid Fees</label>
+                <input type="number" id="paidFees" name="paidFees" min="0" step="1">
+
+                <input type="submit" value="Save">
+            </form>
+        </div>
+    </div>
+
+    <script src="https://kit.fontawesome.com/a8cf255646.js" crossorigin="anonymous"></script>
+    <script>
+        function liveSearchTable() {
+            const input = document.getElementById("searchInput").value.toLowerCase();
+            const table = document.getElementById("feesTable");
+            const rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+            for (let i = 0; i < rows.length; i++) {
+                const nameCell = rows[i].getElementsByTagName("td")[0];
+                const phoneCell = rows[i].getElementsByTagName("td")[1];
+                const courseCell = rows[i].getElementsByTagName("td")[3];
+                const paymentIdCell = rows[i].getElementsByTagName("td")[11];
+
+                // Check if any of the criteria match the search input
+                if (
+                    nameCell.textContent.toLowerCase().includes(input) ||
+                    phoneCell.textContent.toLowerCase().includes(input) ||
+                    courseCell.textContent.toLowerCase().includes(input) ||
+                    paymentIdCell.textContent.endsWith(input)
+                ) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+        document.getElementById("searchInput").addEventListener("input", liveSearchTable);
+
+        async function fetchStudentAndCourseData() {
+            try {
+                const response = await fetch("/getStudentAndCourseData"); // Use your existing endpoint
+                if (response.ok) {
+                    const data = await response.json();
+                    return data;
+                } else {
+                    console.error("Error fetching student and course data. Status:", response.status);
+                    return { students: [], courses: [] };
+                }
+            } catch (error) {
+                console.error("An error occurred while fetching student and course data.", error);
+                return { students: [], courses: [] };
+            }
+        }
+
+        // Function to display student fees data
+        async function displayStudentFeesData() {
+            const { students, courses } = await fetchStudentAndCourseData(); // Fetch both student and course data
+
+            const feesTable = document.getElementById("feesTable").getElementsByTagName('tbody')[0];
+            students.sort((a, b) => a.studentName.localeCompare(b.studentName));
+
+            students.forEach((student) => {
+                const row = feesTable.insertRow(-1);
+
+                // Find the course data for the selected course
+                const selectedCourse = courses.find((course) => course.courseName === student.courseEnrolled);
+
+                if (selectedCourse) {
+                    // Use the course fees as the student's fees
+                    student.fees = selectedCourse.fees;
+
+                    // Calculate the final fees based on fees and discount
+                    const finalFees = student.fees * (1 - student.discount / 100);
+
+                    // Calculate the due fees based on final fees and paid fees
+                    const dueFees = finalFees - student.paidFees;
+
+                    // Calculate the due date (3 months after the join date)
+                    const joinDate = new Date(student.joinDate);
+                    const dueDate = new Date(joinDate);
+                    dueDate.setMonth(dueDate.getMonth() + 3);
+
+                    // Create cells for each column
+                    const cellName = row.insertCell(0);
+                    const cellPhone = row.insertCell(1);
+                    const cellEmail = row.insertCell(2);
+                    const cellCourse = row.insertCell(3);
+                    const cellJoinDate = row.insertCell(4);
+                    const cellFees = row.insertCell(5);
+                    const cellDiscount = row.insertCell(6);
+                    const cellFinalFees = row.insertCell(7);
+                    const cellPaidFees = row.insertCell(8);
+                    const cellDueFees = row.insertCell(9);
+                    const cellDueDate = row.insertCell(10);
+                    const cellPaymentID = row.insertCell(11);
+                    const cellEdit = row.insertCell(12);
+
+                    // Populate the cells with data
+                    cellName.innerHTML = student.studentName;
+                    cellPhone.innerHTML = student.phoneNumber;
+                    cellEmail.innerHTML = student.email;
+                    cellCourse.innerHTML = student.courseEnrolled;
+                    cellJoinDate.innerHTML = student.joinDate;
+                    cellFees.innerHTML = student.fees; // Display course fees
+                    cellDiscount.innerHTML = student.discount;
+                    cellFinalFees.innerHTML = finalFees.toFixed(2);
+                    cellPaidFees.innerHTML = student.paidFees;
+                    cellDueFees.innerHTML = dueFees.toFixed(2);
+                    cellDueDate.innerHTML = dueDate.toLocaleDateString();
+                    cellPaymentID.innerHTML = student.paymentId;
+
+                    // Add an edit button to each row
+                    cellEdit.innerHTML = `<button class="edit-button" onclick="editFees('${student.studentName}', '${student.courseEnrolled}', ${student.discount}, ${student.paidFees})">Edit</button>`;
+                }
+            });
+        }
+        // Function to open the edit fees modal
+        function editFees(studentName, courseEnrolled, discount, paidFees) {
+            const modal = document.getElementById("myModal");
+            const discountInput = document.getElementById("discount");
+            const paidFeesInput = document.getElementById("paidFees");
+
+            discountInput.value = discount;
+            paidFeesInput.value = paidFees;
+
+            modal.style.display = "block";
+
+            // Save the updated fees when the form is submitted
+            document.getElementById("feesForm").addEventListener("submit", async (event) => {
+                event.preventDefault();
+                const updatedDiscount = parseFloat(discountInput.value);
+                const updatedPaidFees = parseFloat(paidFeesInput.value);
+
+                // Update the student's fees data on the server
+                const response = await fetch("/updateStudentFees", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        name: studentName,
+                        course: courseEnrolled,
+                        discount: updatedDiscount,
+                        paidFees: updatedPaidFees,
+                        finalFees: '',/* Calculate the final fees based on the discount and fees data */
+                        dueFees: '',/* Calculate the due fees based on the final fees and paid fees */
+                    }),
+                });
+
+                if (response.ok) {
+                    // Close the modal
+                    modal.style.display = "none";
+
+                    // Refresh the fees data
+                    const feesTable = document.getElementById("feesTable").getElementsByTagName('tbody')[0];
+                    feesTable.innerHTML = "";
+                    displayStudentFeesData();
+                } else {
+                    console.error("Error updating student fees. Status:", response.status);
+                }
+            });
+        }
+
+
+        // Close the modal when the user clicks the close button
+        document.getElementById("closeModal").addEventListener("click", () => {
+            const modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        });
+
+        // Fetch and display student fees data when the page loads
+        displayStudentFeesData();
+    </script>
+</body>
+
+</html>

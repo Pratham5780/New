@@ -57,6 +57,9 @@
             <label for="dob">Date of Birth:</label>
             <input type="date" id="dob" name="dob" required><br>
 
+            <label for="joinDate">Join Date:</label>
+            <input type="date" id="joinDate" name="joinDate" required><br>
+
             <button type="submit">Submit</button>
         </form>
     </div>
@@ -78,7 +81,8 @@
                     <th>Instructor Name</th>
                     <th>Syllabus Link</th>
                     <th>Meeting Link</th>
-                    <th>Fees</th>
+                    <th>Paid Fees</th>
+                    <th>Join Date</th>
                 </thead>
             </tr>
         </table>
@@ -95,6 +99,9 @@
 
         async function addStudent(studentData) {
             try {
+                const uniqueNumber = Math.floor(10000 + Math.random() * 90000);
+                const paymentId = `PAYDIGI${uniqueNumber}`;
+                studentData.paymentId = paymentId;
                 const response = await fetch("/submitStudent", {
                     method: "POST",
                     headers: {
@@ -121,6 +128,7 @@
             event.preventDefault(); // Prevent the default form submission
 
             // Capture form data and create the studentData object
+            // Capture form data and create the studentData object
             const studentData = {
                 studentName: document.getElementById("studentName").value,
                 courseEnrolled: document.getElementById("courseEnrolled").value,
@@ -132,7 +140,13 @@
                 alternateNo: document.getElementById("alternateNo").value,
                 collegeCompany: document.getElementById("collegeCompany").value,
                 dob: document.getElementById("dob").value,
+                joinDate: document.getElementById("joinDate").value,
+                discount: 0, // Initialize discount with 0
+                paidFees: 0, // Initialize paidFees with 0
+                finalFees: 0, // Initialize finalFees with 0
+                paymentId: "", // Initialize paymentId as an empty string
             };
+
 
             // Call the addStudent function with the studentData
             await addStudent(studentData); // Use 'await' to handle async operation
@@ -154,6 +168,11 @@
             }
         }
 
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
         function displayStudentData(students, courses) {
             students.forEach((student) => {
                 const course = courses.find((c) => c.courseName === student.courseEnrolled);
@@ -173,6 +192,7 @@
                     const cellSyllabusLink = row.insertCell(11);
                     const cellMeetingLink = row.insertCell(12);
                     const cellFees = row.insertCell(13);
+                    const cellJoinDate = row.insertCell(14);
 
                     cellName.innerHTML = student.studentName;
                     cellCourse.innerHTML = student.courseEnrolled;
@@ -187,7 +207,8 @@
                     cellInstructor.innerHTML = course.instructorName;
                     cellSyllabusLink.innerHTML = `<a href="${course.syllabus}" target="_blank">Syllabus Link</a>`;
                     cellMeetingLink.innerHTML = `<a href="${course.meetingLink}" target="_blank">Meeting Link</a>`;
-                    cellFees.innerHTML = course.fees;
+                    cellFees.innerHTML = student.paidFees;
+                    cellJoinDate.innerHTML = formatDate(student.joinDate);
                 }
             });
         }

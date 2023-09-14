@@ -382,7 +382,7 @@
                 courseParagraph.textContent = `Course Enrolled: ${student.courseEnrolled}`;
 
                 const startDateParagraph = document.createElement("p");
-                const startDate = new Date(student.startDate);
+                const startDate = new Date(student.joinDate);
                 const formattedStartDate = `${startDate.getDate()}/${startDate.getMonth() + 1}/${startDate.getFullYear()}`;
                 startDateParagraph.textContent = `Start Date: ${formattedStartDate}`;
 

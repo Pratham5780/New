@@ -44,7 +44,14 @@ const studentSchema = new mongoose.Schema({
     alternateNo: String,
     collegeCompany: String,
     dob: String,
+    joinDate: String,
+    discount: Number,
+    paidFees: Number,
+    finalFees: Number,
+    dueFees: Number,
+    paymentId: String,
 });
+
 
 const ticketSchema = new mongoose.Schema({
     ticketID: String,
@@ -240,7 +247,7 @@ app.get("/searchStudentByPhoneNumber", async (req, res) => {
             const studentDetails = students.map((student) => ({
                 studentName: student.studentName,
                 courseEnrolled: student.courseEnrolled,
-                startDate: student.startDate,
+                joinDate: student.joinDate,
                 phoneNumber: student.phoneNumber,
             }));
 
@@ -478,6 +485,12 @@ app.post("/submitStudent", async (req, res) => {
             alternateNo: studentData.alternateNo,
             collegeCompany: studentData.collegeCompany,
             dob: studentData.dob,
+            joinDate: studentData.joinDate,
+            discount: studentData.discount,
+            paidFees: studentData.paidFees,
+            finalFees: studentData.finalFees,
+            dueFees: studentData.finalFees - studentData.paidFees,
+            paymentId: studentData.paymentId,
         });
 
         // Save the new Student document to the database
@@ -489,6 +502,7 @@ app.post("/submitStudent", async (req, res) => {
         res.status(500).send("An error occurred while submitting student data.");
     }
 });
+module.exports = Student;
 
 app.get('/getStudentAndCourseData', async (req, res) => {
     try {
@@ -503,6 +517,50 @@ app.get('/getStudentAndCourseData', async (req, res) => {
     } catch (error) {
         console.error('Error fetching student and course data:', error);
         res.status(500).json({ error: 'An error occurred while fetching data.' });
+    }
+});
+
+app.get('/getStudentData', async (req, res) => {
+    try {
+        // Fetch student data from the database (assuming you have a Student model)
+        const students = await Student.find({}, '-_id'); // Exclude the _id field
+
+        // Send the student data as JSON
+        res.status(200).json(students);
+    } catch (error) {
+        // Handle errors
+        console.error('Error fetching student data:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Route to update student fees
+app.post('/updateStudentFees', async (req, res) => {
+    try {
+        const { name, course, discount, paidFees, finalFees, dueFees } = req.body;
+
+        // Find the student by name and course
+        const student = await Student.findOne({ studentName: name, courseEnrolled: course });
+
+        if (student) {
+            // Update the student's data in the database
+            student.discount = discount;
+            student.paidFees = paidFees;
+            student.finalFees = finalFees;
+            student.dueFees = dueFees;
+
+            await student.save();
+
+            // Send a success response
+            res.status(200).json({ message: 'Student fees updated successfully' });
+        } else {
+            // Student not found
+            res.status(404).json({ message: 'Student not found' });
+        }
+    } catch (error) {
+        // Handle errors
+        console.error('Error updating student fees:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 });
 

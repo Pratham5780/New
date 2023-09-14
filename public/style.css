@@ -41,6 +41,7 @@
 #addButton:hover{
     background-color: #37a36b;
 }
+
 #addTicketForm,
 #studentFormContainer,
 #traineeFormContainer,
@@ -98,6 +99,7 @@ button{
     text-align: center;
     padding: 10px;
 }
+#feesTable,
 #courseTable,
 #courseForm,
 #ticketForm,
@@ -352,3 +354,65 @@ button:hover{
     border: 0.5px solid black;
     border-radius: 5px;
 }
+.edit-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+/* Add this CSS for the modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* Add this CSS to style the form inside the modal */
+#feesForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#feesForm label {
+    margin-top: 10px;
+}
+
+#feesForm input[type="number"] {
+    width: 60%;
+    padding: 5px;
+    margin-top: 5px;
+}
+
+#feesForm input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-top: 10px;
+    cursor: pointer;
+}        
