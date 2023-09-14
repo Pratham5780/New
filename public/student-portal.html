@@ -63,7 +63,10 @@
             <button type="submit">Submit</button>
         </form>
     </div>
-
+    <div class="search-container">
+        <input type="text" class="searchbar2" id="searchInput"
+            placeholder="Search by Name, Course, Phone Number, State">
+    </div>
     <div id="studentDataDisplay">
         <table id="studentDataTable">
             <tr>
@@ -77,10 +80,10 @@
                     <th>Parents Name</th>
                     <th>Alternate No.</th>
                     <th>College/Company Name</th>
-                    <th>Date of Birth</th>
+                    <th>Dob </th>
                     <th>Instructor Name</th>
-                    <th>Syllabus Link</th>
-                    <th>Meeting Link</th>
+                    <th><i class="fa-solid tab-head fa-book"></i></th>
+                    <th><i class="fa-solid tab-head fa-video"></i></th>
                     <th>Paid Fees</th>
                     <th>Join Date</th>
                 </thead>
@@ -96,6 +99,33 @@
 
         const studentDataDisplay = document.getElementById("studentDataDisplay");
         const studentDataTable = document.getElementById("studentDataTable");
+
+        function liveSearchTable() {
+            const input = document.getElementById("searchInput").value.toLowerCase();
+            const table = document.getElementById("studentDataTable");
+            const rows = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < rows.length; i++) { // Start from 1 to skip the header row
+                const nameCell = rows[i].getElementsByTagName("td")[0];
+                const courseCell = rows[i].getElementsByTagName("td")[1];
+                const phoneCell = rows[i].getElementsByTagName("td")[2];
+                const stateCell = rows[i].getElementsByTagName("td")[3];
+
+                // Check if any of the criteria match the search input
+                if (
+                    nameCell.textContent.toLowerCase().includes(input) ||
+                    courseCell.textContent.toLowerCase().includes(input) ||
+                    phoneCell.textContent.toLowerCase().includes(input) ||
+                    stateCell.textContent.toLowerCase().includes(input)
+                ) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+
+        document.getElementById("searchInput").addEventListener("input", liveSearchTable);
 
         async function addStudent(studentData) {
             try {
@@ -205,17 +235,38 @@
                     cellCollegeCompany.innerHTML = student.collegeCompany;
                     cellDOB.innerHTML = student.dob;
                     cellInstructor.innerHTML = course.instructorName;
-                    cellSyllabusLink.innerHTML = `<a href="${course.syllabus}" target="_blank">Syllabus Link</a>`;
-                    cellMeetingLink.innerHTML = `<a href="${course.meetingLink}" target="_blank">Meeting Link</a>`;
+                    cellSyllabusLink.innerHTML = `<a href="${course.syllabus}" target="_blank"><i class="fa-solid tab fa-link"></i></a>`;
+                    cellMeetingLink.innerHTML = `<a href="${course.meetingLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a>`;
                     cellFees.innerHTML = student.paidFees;
                     cellJoinDate.innerHTML = formatDate(student.joinDate);
                 }
             });
         }
+        async function fetchDataAndSort() {
+            try {
+                const response = await fetch("/getStudentAndCourseData"); // Replace with your actual endpoint
+                if (response.ok) {
+                    const data = await response.json();
+                    const students = data.students;
+                    const courses = data.courses;
+
+                    // Sort students by studentName
+                    students.sort((a, b) => a.studentName.localeCompare(b.studentName));
+
+                    // Display sorted data
+                    displayStudentData(students, courses);
+                } else {
+                    console.error("Error fetching data.");
+                }
+            } catch (error) {
+                console.error("An error occurred while fetching data.", error);
+            }
+        }
 
         // Fetch and display data when the page loads
-        fetchData();
-
+        window.addEventListener('load', () => {
+            fetchDataAndSort(); // Fetch and sort data immediately after loading the page
+        });
         // Show the add student form when the button is clicked
         addStudentButton.addEventListener("click", () => {
             studentFormContainer.style.display = "block";
@@ -253,7 +304,6 @@
                 console.error("An error occurred while populating the course dropdown:", error);
             }
         }
-
         // Call the populateCourseDropdown function when the page loads
         window.addEventListener('load', populateCourseDropdown);
 
