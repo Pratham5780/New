@@ -65,6 +65,9 @@
                 <label for="paidFees">Paid Fees</label>
                 <input type="number" id="paidFees" name="paidFees" min="0" step="1">
 
+                <label for="dueDate">Due Date</label>
+                <input type="date" id="dueDate" name="dueDate">
+
                 <input type="submit" value="Save">
             </form>
         </div>
@@ -137,10 +140,17 @@
                     // Calculate the due fees based on final fees and paid fees
                     const dueFees = finalFees - student.paidFees;
 
-                    // Calculate the due date (3 months after the join date)
-                    const joinDate = new Date(student.joinDate);
-                    const dueDate = new Date(joinDate);
-                    dueDate.setMonth(dueDate.getMonth() + 3);
+                    let dueDate = student.dueDate;
+
+                    if (!dueDate) {
+                        // If the due date is not available in the database, set it to 1 month after the join date
+                        const joinDate = new Date(student.joinDate);
+                        dueDate = new Date(joinDate);
+                        dueDate.setMonth(dueDate.getMonth() + 1);
+                    } else {
+                        // If the due date is available, convert it to a JavaScript Date object
+                        dueDate = new Date(dueDate);
+                    }
 
                     // Create cells for each column
                     const cellName = row.insertCell(0);
@@ -172,18 +182,20 @@
                     cellPaymentID.innerHTML = student.paymentId;
 
                     // Add an edit button to each row
-                    cellEdit.innerHTML = `<button class="edit-button" onclick="editFees('${student.studentName}', '${student.courseEnrolled}', ${student.discount}, ${student.paidFees})">Edit</button>`;
+                    cellEdit.innerHTML = `<button class="edit-button" onclick="editFees('${student.studentName}', '${student.courseEnrolled}', ${student.discount}, ${student.paidFees},'${dueDate.toISOString().split('T')[0]}')">Edit</button>`;
                 }
             });
         }
         // Function to open the edit fees modal
-        function editFees(studentName, courseEnrolled, discount, paidFees) {
+        function editFees(studentName, courseEnrolled, discount, paidFees, dueDate) {
             const modal = document.getElementById("myModal");
             const discountInput = document.getElementById("discount");
             const paidFeesInput = document.getElementById("paidFees");
+            const dueDateInput = document.getElementById("dueDate");
 
             discountInput.value = discount;
             paidFeesInput.value = paidFees;
+            dueDateInput.value = dueDate;
 
             modal.style.display = "block";
 
@@ -192,6 +204,7 @@
                 event.preventDefault();
                 const updatedDiscount = parseFloat(discountInput.value);
                 const updatedPaidFees = parseFloat(paidFeesInput.value);
+                const updatedDueDate = dueDateInput.value;
 
                 // Update the student's fees data on the server
                 const response = await fetch("/updateStudentFees", {
@@ -204,8 +217,9 @@
                         course: courseEnrolled,
                         discount: updatedDiscount,
                         paidFees: updatedPaidFees,
-                        finalFees: '',/* Calculate the final fees based on the discount and fees data */
-                        dueFees: '',/* Calculate the due fees based on the final fees and paid fees */
+                        dueDate: updatedDueDate,
+                        finalFees: '', /* Calculate the final fees based on the discount and fees data */
+                        dueFees: '', /* Calculate the due fees based on the final fees and paid fees */
                     }),
                 });
 

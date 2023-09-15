@@ -86,6 +86,7 @@
                     <th><i class="fa-solid tab-head fa-video"></i></th>
                     <th>Paid Fees</th>
                     <th>Join Date</th>
+                    <th>Ticket</th>
                 </thead>
             </tr>
         </table>
@@ -175,6 +176,7 @@
                 paidFees: 0, // Initialize paidFees with 0
                 finalFees: 0, // Initialize finalFees with 0
                 paymentId: "", // Initialize paymentId as an empty string
+                dueDate: "",
             };
 
 
@@ -223,6 +225,7 @@
                     const cellMeetingLink = row.insertCell(12);
                     const cellFees = row.insertCell(13);
                     const cellJoinDate = row.insertCell(14);
+                    const cellTickets = row.insertCell(15);
 
                     cellName.innerHTML = student.studentName;
                     cellCourse.innerHTML = student.courseEnrolled;
@@ -239,9 +242,22 @@
                     cellMeetingLink.innerHTML = `<a href="${course.meetingLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a>`;
                     cellFees.innerHTML = student.paidFees;
                     cellJoinDate.innerHTML = formatDate(student.joinDate);
+                    const ticketLink = document.createElement("a");
+                    const ticketURL = `ticket-system.html?phone=${student.phoneNumber}`;
+                    ticketLink.href = ticketURL;
+                    ticketLink.innerHTML = '<i class="fa-solid tab fa-arrow-up-right-from-square"></i>';
+                    cellTickets.appendChild(ticketLink);
                 }
             });
         }
+        studentDataTable.addEventListener("click", function (event) {
+            const clickedElement = event.target;
+            if (clickedElement.tagName === "A") {
+                event.preventDefault();
+                const ticketSystemURL = clickedElement.href;
+                window.location.href = ticketSystemURL;
+            }
+        });
         async function fetchDataAndSort() {
             try {
                 const response = await fetch("/getStudentAndCourseData"); // Replace with your actual endpoint

@@ -50,6 +50,7 @@ const studentSchema = new mongoose.Schema({
     finalFees: Number,
     dueFees: Number,
     paymentId: String,
+    dueDate: String,
 });
 
 
@@ -491,6 +492,7 @@ app.post("/submitStudent", async (req, res) => {
             finalFees: studentData.finalFees,
             dueFees: studentData.finalFees - studentData.paidFees,
             paymentId: studentData.paymentId,
+            dueDate: studentData.dueDate,
         });
 
         // Save the new Student document to the database
@@ -537,7 +539,7 @@ app.get('/getStudentData', async (req, res) => {
 // Route to update student fees
 app.post('/updateStudentFees', async (req, res) => {
     try {
-        const { name, course, discount, paidFees, finalFees, dueFees } = req.body;
+        const { name, course, discount, paidFees, finalFees, dueFees, dueDate } = req.body;
 
         // Find the student by name and course
         const student = await Student.findOne({ studentName: name, courseEnrolled: course });
@@ -548,6 +550,7 @@ app.post('/updateStudentFees', async (req, res) => {
             student.paidFees = paidFees;
             student.finalFees = finalFees;
             student.dueFees = dueFees;
+            student.dueDate = dueDate;
 
             await student.save();
 

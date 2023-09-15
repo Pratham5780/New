@@ -82,6 +82,13 @@
         const addTicketForm = document.getElementById("addTicketForm");
         const ticketForm = document.getElementById("ticketForm");
         const courseSelection = document.getElementById("courseSelection");
+        const urlParams = new URLSearchParams(window.location.search);
+        const phoneNumber = urlParams.get('phone');
+
+        const phoneNumberInput = document.getElementById("phoneNumberInput");
+        if (phoneNumberInput) {
+            phoneNumberInput.value = phoneNumber;
+        }
 
         function toggleAddTicketForm() {
             if (addTicketForm.style.display === "none" || addTicketForm.style.display === "") {
