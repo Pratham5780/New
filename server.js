@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const port = 3000;
@@ -565,6 +566,38 @@ app.post('/updateStudentFees', async (req, res) => {
         console.error('Error updating student fees:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
+});
+
+const transporter = nodemailer.createTransport({
+    service: 'Gmail', // Use your email service provider
+    auth: {
+        user: 'khandelwalg578@gmail.com', // Replace with your email
+        pass: 'iodnzocblhqgnkvs', // Replace with your email password
+    },
+});
+
+// Define a route to send an email
+app.post('/sendEmail', (req, res) => {
+    const { to, subject, text } = req.body;
+
+    // Define the email options
+    const mailOptions = {
+        from: 'khandelwalg578@gmail.com', // Replace with your email
+        to,
+        subject,
+        text,
+    };
+
+    // Send the email
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending email:', error);
+            res.status(500).json({ error: 'Error sending email' });
+        } else {
+            console.log('Email sent:', info.response);
+            res.status(200).json({ message: 'Email sent successfully' });
+        }
+    });
 });
 
 app.listen(port, () => {
