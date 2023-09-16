@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
+const pdf = require('html-pdf');
 
 const app = express();
 const port = 3000;
@@ -578,14 +579,25 @@ const transporter = nodemailer.createTransport({
 
 // Define a route to send an email
 app.post('/sendEmail', (req, res) => {
+    const fs = require('fs'); // Include the 'fs' module
+    const htmlContent = fs.readFileSync('invoice.html', 'utf8');
+    const pdfOptions = { format: 'Letter' }; // Adjust format options as needed
+        pdf.create(htmlContent, pdfOptions).toFile('invoice.pdf', (err, res) => {
+            if (err) {
+                console.error('Error generating PDF:', err);
+                res.status(500).json({ error: 'Error generating PDF' });
+                return;
+            }
+
     const { to, subject, text } = req.body;
 
-    // Define the email options
     const mailOptions = {
         from: 'khandelwalg578@gmail.com', // Replace with your email
         to,
         subject,
-        text,
+        text: 'Here is your fees payment invoice - DigiGrowHub!',
+        html: htmlContent,
+        attachments: [{ filename: 'invoice.pdf', path: 'invoice.pdf' }],
     };
 
     // Send the email
@@ -598,6 +610,7 @@ app.post('/sendEmail', (req, res) => {
             res.status(200).json({ message: 'Email sent successfully' });
         }
     });
+});
 });
 
 app.listen(port, () => {
