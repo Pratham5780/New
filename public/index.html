@@ -4,513 +4,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Management Website</title>
     <link rel="stylesheet" href="style.css">
+    <title>Document</title>
 </head>
 
 <body>
-    <div class="nav">
-        <div class="header">
-            <img src="https://digigrowhub.in/wp-content/uploads/2021/10/digi-new.png" alt="">
-            <div class="nav-btn">
-                <a href="index.html"><i class="fa-solid fa-house" style="color: #fff"></i></a>
-                <a href="course.html"><button>Course List</button></a>
-                <a href="fees.html"><button>Fees Portal</button></a>
-                <a href="ticket-system.html"><button id="ticketSystemButton">Ticket System</button></a>
-                <a href="student-portal.html"><button id="studentPortalButton">Student Portal</button></a>
-                <button id="addButton">Add Class</button>
-                <button id="traineePortalButton">Trainer Pannel</button>
+    <img class="logo-img" src="https://digigrowhub.in/wp-content/uploads/2021/10/digi-new.png" alt="">
+    <img class="wave" src="./images/wave-haikei.svg" alt="">
+    <div class="heading">
+        <div class="head-text">
+            <h2>Welcome to,</h1>
+                <h1>DigiGrowHub</h1>
+                <span id="element"></span>
+        </div>
+        <div class="head-img">
+            <img src="../images/person.avif" alt="">
+        </div>
+    </div>
+    <div class="grid-container">
+        <a href="manage.html">
+            <div class="card">
+                <img src="../images/1.svg" alt="Image 1">
+                <h2>Management Portal</h2>
             </div>
-        </div>
+        </a>
+        <a href="index2.html">
+            <div class="card">
+                <img src="../images/2.svg" alt="Image 2">
+                <h2>Trainer's Portal</h2>
+            </div>
+        </a>
+        <a href="student-portal.html">
+            <div class="card">
+                <img src="./images/3.svg" alt="Image 3">
+                <h2>Student's Portal</h2>
+            </div>
+        </a>
+        <a href="course.html">
+            <div class="card">
+                <img src="../images/4.svg" alt="Image 4">
+                <h2>Course Portal</h2>
+            </div>
+        </a>
+        <a href="ticket-system.html">
+            <div class="card">
+                <img src="../images/5.svg" alt="Image 4">
+                <h2>Ticket System</h2>
+            </div>
+        </a>
+        <a href="issues.html">
+            <div class="card">
+                <img src="../images/6.svg" alt="Image 4">
+                <h2>Tickets</h2>
+            </div>
+        </a>
+        <a href="resolve.html">
+            <div class="card">
+                <img src="../images/7.svg" alt="Image 4">
+                <h2>Resolved Tickets</h2>
+            </div>
+        </a>
+        <a href="fees.html">
+            <div class="card">
+                <img src="../images/8.svg" alt="Image 4">
+                <h2>Fees Portal</h2>
+            </div>
+        </a>
     </div>
-    <div id="formContainer" style="display: none;">
-        <h2>Add New Event</h2>
-        <div id="loader" style="display: none;">
-            <div class="loader"></div>
-        </div>
-        <form id="eventForm">
-            <label for="startDate">Start Date:</label>
-            <input type="date" id="startDate" name="startDate" required><br>
-
-            <label for="endDate">End Date:</label>
-            <input type="date" id="endDate" name="endDate" required><br>
-
-            <label for="courseName">Course Name:</label>
-            <input type="text" id="courseName" name="courseName" required><br>
-
-            <label for="duration">Duration:</label>
-            <input type="text" id="duration" name="duration" required><br>
-
-            <label for="startTime">Start Time:</label>
-            <input type="time" id="startTime" name="startTime" required><br>
-
-            <label for="endTime">End Time:</label>
-            <input type="time" id="endTime" name="endTime" required><br>
-
-            <label for="Counsellor">Counsellor:</label>
-            <input type="text" id="Counsellor" name="Counsellor" required><br>
-
-            <label for="trainerName">Trainer Name:</label>
-            <input type="text" id="trainerName" name="trainerName" required><br>
-
-            <label for="syllabusLink">Syllabus Link:</label>
-            <input type="url" id="syllabusLink" name="syllabusLink" required><br>
-
-            <label for="meetingLink">Meeting Link:</label>
-            <input type="url" id="meetingLink" name="meetingLink" required><br>
-
-            <label for="studentInfoLink">Student Info Link:</label>
-            <input type="url" id="studentInfoLink" name="studentInfoLink" required><br>
-
-            <button type="submit">Submit</button>
-        </form>
-    </div>
-
-    <div id="editFormContainer" style="display: none;">
-        <h2>Edit Event</h2>
-        <form id="editForm">
-            <label for="editStartDate">Start Date:</label>
-            <input type="date" id="editStartDate" name="editStartDate" required><br>
-
-            <label for="editEndDate">Start Date:</label>
-            <input type="date" id="editEndDate" name="editEndDate" required><br>
-
-            <label for="editCourseName">Course Name:</label>
-            <input type="text" id="editCourseName" name="courseName" required><br>
-
-            <label for="editDuration">Duration:</label>
-            <input type="text" id="editDuration" name="duration" required><br>
-
-            <label for="editStartTime">Start Time:</label>
-            <input type="time" id="editStartTime" name="startTime" required><br>
-
-            <label for="editEndTime">End Time:</label>
-            <input type="time" id="editEndTime" name="endTime" required><br>
-
-            <label for="editCounsellor">Counsellor Name:</label>
-            <input type="text" id="editCounsellor" name="Counsellor" required><br>
-
-            <label for="editTrainerName">Trainer Name:</label>
-            <input type="text" id="editTrainerName" name="trainerName" required><br>
-
-            <label for="editSyllabusLink">Syllabus Link:</label>
-            <input type="url" id="editSyllabusLink" name="syllabusLink" required><br>
-
-            <label for="editMeetingLink">Meeting Link:</label>
-            <input type="url" id="editMeetingLink" name="meetingLink" required><br>
-
-            <label for="editStudentInfoLink">Student Info Link:</label>
-            <input type="url" id="editStudentInfoLink" name="studentInfoLink" required><br>
-
-            <button class="updateButton" type="submit">Update</button>
-        </form>
-    </div>
-
-    <div id="eventTableContainer">
-        <input type="text" id="searchInput" class="searchbar" placeholder="Search by Trainer Name">
-        <table id="eventTable">
-            <thead>
-                <tr>
-                    <th>B. Code</th>
-                    <th>Course Name</th>
-                    <th>Trainer Name</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Duration</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Counsellor</th>
-                    <th><i class="fa-solid tab-head fa-book"></i></th>
-                    <th><i class="fa-solid tab-head fa-video"></i></th>
-                    <th><i class="fa-solid tab-head fa-user"></i></th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="eventTableBody">
-                <!-- Data rows will be inserted here -->
-            </tbody>
-        </table>
-    </div>
-    <script src="https://kit.fontawesome.com/a8cf255646.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
     <script>
-        const addButton = document.getElementById("addButton");
-        const formContainer = document.getElementById("formContainer");
-        const editFormContainer = document.getElementById('editFormContainer');
-        const eventForm = document.getElementById("eventForm");
-        const eventTableBody = document.getElementById('eventTableBody');
-        const traineePortalButton = document.getElementById("traineePortalButton");
-        const loader = document.getElementById("loader");
-        const updateButton = document.getElementsByClassName("updateButton");
-
-
-        traineePortalButton.addEventListener("click", async function () {
-            const password = prompt("Enter password:");
-            if (password !== null) {
-                const isValidPassword = await validatePassword(password);
-                if (isValidPassword) {
-                    window.location.href = "index2.html"; // Redirect to the trainee portal page
-                }
-            }
-            else {
-                alert("Invalid password. Access denied.");
-            }
+        var typed = new Typed('#element', {
+            strings: ['Management Portal!', 'Trainer\'s Portal!', 'Student\'s Portal!', 'Course\'s Portal!', 'Ticket System!', 'Fees Portal!'],
+            typeSpeed: 60,
+            backSpeed: 30,
+            loop: true,
         });
-
-        addButton.addEventListener("click", function () {
-            const isVisible = addButton.getAttribute("data-visible") === "true";
-            if (isVisible) {
-                formContainer.style.display = "none";
-                editFormContainer.style.display = "none";
-                addButton.setAttribute("data-visible", "false");
-            } else {
-                formContainer.style.display = "block";
-                addButton.setAttribute("data-visible", "true");
-            }
-        });
-
-        eventForm.addEventListener("submit", async function (event) {
-            event.preventDefault();
-
-            const formData = new FormData(eventForm);
-            const formDataObject = {
-                startDate: formData.get('startDate'),
-                endDate: formData.get('endDate'),
-                courseName: formData.get('courseName'),
-                duration: formData.get('duration'),
-                startTime: formData.get('startTime'),
-                endTime: formData.get('endTime'),
-                Cousellor: formData.get('Counsellor'),
-                trainerName: formData.get('trainerName'),
-                syllabusLink: formData.get('syllabusLink'),
-                meetingLink: formData.get('meetingLink'),
-                studentInfoLink: formData.get('studentInfoLink')
-            };
-            eventForm.style.display = "none";
-            loader.style.display = "block";
-
-            try {
-                const response = await fetch("/submit", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(formDataObject),
-                });
-
-                if (response.ok) {
-                    formContainer.style.display = "none";
-                    loadEvents();
-                    eventForm.reset(); // Reset the form
-                    alert("Data added successfully!");
-                } else {
-                    console.error("Error submitting data.");
-                }
-            } catch (error) {
-                console.error("An error occurred while submitting data.", error);
-            } finally {
-                loader.style.display = "none";
-            }
-        });
-
-        function createEditButton(event) {
-            const editButton = document.createElement('button');
-            editButton.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
-            editButton.addEventListener('click', () => openEditForm(event));
-            return editButton;
-        }
-
-        function toggleButtonLoader(button, isLoading) {
-            if (isLoading) {
-                button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-                button.disabled = true;
-            } else {
-                button.innerHTML = '<i class="fa-solid fa-trash"></i>';
-                button.disabled = false;
-            }
-        }
-        function createDeleteButton(event) {
-            const deleteButton = document.createElement('button');
-            deleteButton.classList.add('red-button');
-            deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
-            deleteButton.addEventListener('click', async () => {
-                // const password = prompt("Enter password:");
-                // if (password !== null) {
-                //     const isValidPassword = await validatePassword(password);
-                //     if (isValidPassword) {
-                toggleButtonLoader(deleteButton, true);
-                try {
-                    const response = await fetch(`/delete/${event._id}`, {
-                        method: 'DELETE'
-                    });
-
-                    if (response.ok) {
-                        loadEvents();
-                    } else {
-                        console.error('Error deleting data.');
-                    }
-                } catch (error) {
-                    console.error('An error occurred while deleting data.', error);
-                } finally {
-                    // Revert the delete button to its normal state
-                    toggleButtonLoader(deleteButton, false);
-                }
-                // } else {
-                //     alert("Invalid password. Access denied.");
-                // }
-                // }
-            });
-
-            return deleteButton;
-        }
-
-        async function validatePassword(password) {
-            try {
-                const response = await fetch("/password", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ password }),
-                });
-
-                if (response.ok) {
-                    const { valid } = await response.json();
-                    return valid;
-                } else {
-                    console.error("Error validating password.");
-                    return false;
-                }
-            } catch (error) {
-                console.error("An error occurred while validating password.", error);
-                return false;
-            }
-        }
-
-        async function openEditForm(event) {
-            // const password = prompt("Enter password:");
-            // if (password !== null) {
-            //     const isValidPassword = await validatePassword(password);
-            //     if (isValidPassword) {
-            // Proceed with edit action
-            editFormContainer.style.display = "block";
-
-            const editForm = document.getElementById('editForm');
-            const editStartDate = document.getElementById('editStartDate');
-            const editEndDate = document.getElementById('editEndDate');
-            const editCourseName = document.getElementById('editCourseName');
-            const editDuration = document.getElementById('editDuration');
-            const editStartTime = document.getElementById('editStartTime');
-            const editEndTime = document.getElementById('editEndTime');
-            const editCounsellor = document.getElementById('editCounsellor');
-            const editTrainerName = document.getElementById('editTrainerName');
-            const editSyllabusLink = document.getElementById('editSyllabusLink');
-            const editMeetingLink = document.getElementById('editMeetingLink');
-            const editStudentInfoLink = document.getElementById('editStudentInfoLink');
-
-            editStartDate.value = event.startDate;
-            editEndDate.value = event.endDate;
-            editCourseName.value = event.courseName;
-            editDuration.value = event.duration;
-            editStartTime.value = event.startTime;
-            editEndTime.value = event.endTime;
-            editCounsellor.value = event.Cousellor;
-            editTrainerName.value = event.trainerName;
-            editSyllabusLink.value = event.syllabusLink;
-            editMeetingLink.value = event.meetingLink;
-            editStudentInfoLink.value = event.studentInfoLink;
-
-            editForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                toggleButtonLoader(updateButton, true);
-                const updatedData = {
-                    startDate: editStartDate.value,
-                    endDate: editEndDate.value,
-                    courseName: editCourseName.value,
-                    duration: editDuration.value,
-                    startTime: editStartTime.value,
-                    endTime: editEndTime.value,
-                    Counsellor: editCounsellor.value,
-                    trainerName: editTrainerName.value,
-                    syllabusLink: editSyllabusLink.value,
-                    meetingLink: editMeetingLink.value,
-                    studentInfoLink: editStudentInfoLink.value
-                };
-
-                try {
-                    const response = await fetch(`/edit/${event._id}`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(updatedData)
-                    });
-
-                    if (response.ok) {
-                        editFormContainer.style.display = 'none';
-                        loadEvents();
-                    } else {
-                        console.error('Error updating data.');
-                    }
-                } catch (error) {
-                    console.error('An error occurred while updating data.', error);
-                } finally {
-                    // Revert the "Update" button to its normal state
-                    toggleButtonLoader(updateButton, false);
-                }
-            });
-            //} else {
-            //     alert("Invalid password. Access denied.");
-            // }
-        }
-        const searchInput = document.getElementById('searchInput');
-        searchInput.addEventListener('input', () => {
-            const searchTerm = searchInput.value.trim().toLowerCase();
-            filterAndDisplayEvents(searchTerm);
-        });
-
-        async function filterAndDisplayEvents(searchTerm) {
-            const response = await fetch('/events');
-            const eventData = await response.json();
-
-            const filteredEvents = eventData.filter(event =>
-                event.trainerName.toLowerCase().includes(searchTerm)
-            );
-
-            eventTableBody.innerHTML = ''; // Clear the existing table rows
-
-            filteredEvents.forEach((event, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${event.courseName}</td>
-            <td>${event.trainerName}</td>
-            <td>${format12HourTime(event.startTime)}</td>
-            <td>${format12HourTime(event.endTime)}</td>
-            <td>${event.duration}</td>
-            <td>${formatDate(event.startDate)}</td>
-            <td>${formatDate(event.endDate)}</td>
-            <td>${event.Counsellor}</td>
-            <td><a href="${event.syllabusLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
-            <td><a href="${event.meetingLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
-            <td><a href="${event.studentInfoLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
-            <td></td>
-        `;
-
-                const editButtonCell = row.querySelector('td:last-child');
-                const editButton = createEditButton(event);
-                const deleteButton = createDeleteButton(event);
-                editButtonCell.appendChild(editButton);
-                editButtonCell.appendChild(deleteButton);
-
-                eventTableBody.appendChild(row);
-            });
-        }
-
-        function isTimeInRange(time, startTime, endTime) {
-            const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
-            return currentTime >= startTime && currentTime <= endTime;
-        }
-
-        function convertTo24HourFormat(time12) {
-            const [time, period] = time12.split(" ");
-            const [hour, minute] = time.split(":");
-            let hour24 = parseInt(hour);
-
-            if (period === "PM" && hour24 !== 12) {
-                hour24 += 12;
-            } else if (period === "AM" && hour24 === 12) {
-                hour24 = 0;
-            }
-
-            return `${hour24.toString().padStart(2, "0")}:${minute}`;
-        }
-
-
-        // Function to update row colors based on time range
-        function updateRowColors() {
-            const rows = document.querySelectorAll('#eventTableBody tr');
-            rows.forEach(row => {
-                const startTime = row.cells[3].textContent;
-                const endTime = row.cells[4].textContent;
-                const formattedStartTime = convertTo24HourFormat(startTime);
-                const formattedEndTime = convertTo24HourFormat(endTime);
-
-                if (isTimeInRange(new Date(), formattedStartTime, formattedEndTime)) {
-                    row.classList.add('active-event');
-                } else {
-                    row.classList.remove('active-event');
-                }
-            });
-        }
-
-        function format12HourTime(time24) {
-            const [hour, minute] = time24.split(":");
-            const parsedHour = parseInt(hour);
-            let period = "AM";
-
-            if (parsedHour >= 12) {
-                period = "PM";
-            }
-
-            const formattedHour = parsedHour % 12 === 0 ? 12 : parsedHour % 12;
-
-            return `${formattedHour}:${minute} ${period}`;
-        }
-
-        function formatDate(date) {
-            const options = { year: '2-digit', month: '2-digit', day: '2-digit' };
-            return new Date(date).toLocaleDateString('en-GB', options);
-        }
-
-        // Load events and update row colors
-        async function loadEvents() {
-            eventTableBody.innerHTML = '';
-
-            try {
-                const response = await fetch('/events');
-                const eventData = await response.json();
-
-                eventData.forEach((event, index) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-            <td>DGH${index + 1}</td>
-            <td>${event.courseName}</td>
-            <td>${event.trainerName}</td>
-            <td>${format12HourTime(event.startTime)}</td>
-            <td>${format12HourTime(event.endTime)}</td>
-            <td>${event.duration}</td>
-            <td>${formatDate(event.startDate)}</td>
-            <td>${formatDate(event.endDate)}</td>
-            <td>${event.Counsellor ? event.Counsellor : 'N/A'}</td>
-            <td><a href="${event.syllabusLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
-            <td><a href="${event.meetingLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
-            <td><a href="${event.studentInfoLink}" target="_blank"><i class="fa-solid tab fa-link"></i></a></td>
-            <td></td>
-        `;
-
-                    const editButtonCell = row.querySelector('td:last-child');
-                    const editButton = createEditButton(event);
-                    const deleteButton = createDeleteButton(event);
-                    editButtonCell.appendChild(editButton);
-                    editButtonCell.appendChild(deleteButton);
-
-                    eventTableBody.appendChild(row);
-                });
-
-                const eventTableContainer = document.getElementById('eventTableContainer');
-                eventTableContainer.style.display = 'block';
-            } catch (error) {
-                console.error('Error loading events:', error);
-            }
-
-            updateRowColors();
-            setInterval(updateRowColors, 1000 * 60); // Update colors every minute
-        }
-
-        loadEvents();
-
     </script>
-
 </body>
 
 </html>
