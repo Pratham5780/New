@@ -16,7 +16,7 @@
             <h1>Trainer Portal</h1>
             <div class="nav-btn">
                 <button id="addTraineeButton">Add Trainer</button>
-                <button id="addButton">Management Pannel</button>
+                <button id="addButton">Management Panel</button>
             </div>
         </div>
     </div>
@@ -53,6 +53,39 @@
             <button type="submit">Submit</button>
         </form>
     </div>
+    <div id="editForm" style="display: none;">
+        <h2>Edit Trainer Details</h2>
+        <form id="editTrainerForm">
+            <label for="editTraineeName">Name:</label>
+            <input type="text" id="editTraineeName" name="editTraineeName" required><br>
+
+            <label for="editTraineeContact">Contact No.:</label>
+            <input type="text" id="editTraineeContact" name="editTraineeContact" required><br>
+
+            <label for="editTraineeAlternative">Alternative No.:</label>
+            <input type="text" id="editTraineeAlternative" name="editTraineeAlternative"><br>
+
+            <label for="editTraineeCity">City:</label>
+            <input type="text" id="editTraineeCity" name="editTraineeCity" required><br>
+
+            <label for="editTraineeSkills">Skills:</label>
+            <input type="text" id="editTraineeSkills" name="editTraineeSkills" required><br>
+
+            <label for="editTraineeLogin">Email ID:</label>
+            <input type="text" id="editTraineeLogin" name="editTraineeLogin" required><br>
+
+            <label for="editTraineePassword">Meeting Link:</label>
+            <input type="url" id="editTraineePassword" name="editTraineePassword" required><br>
+
+            <label for="editTraineePortfolio">Portfolio Link:</label>
+            <input type="url" id="editTraineePortfolio" name="editTraineePortfolio" required><br>
+
+            <label for="editTraineeNotes">GDrive Link:</label>
+            <input type="url" id="editTraineeNotes" name="editTraineeNotes" required><br>
+
+            <button type="submit">Update</button>
+        </form>
+    </div>
     <div id="traineeTableContainer">
         <h2>Trainer List</h2>
         <input type="text" id="searchInput" class="searchbar2" placeholder="Search by Name, Skills, City"
@@ -69,6 +102,7 @@
                     <th><i class="fa-solid tab-head fa-video"></i></th>
                     <th>Profile</th>
                     <th>Notes</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody id="traineeTableBody">
@@ -77,16 +111,16 @@
         </table>
     </div>
     <script src="https://kit.fontawesome.com/a8cf255646.js" crossorigin="anonymous"></script>
-
     <script>
         const addTraineeButton = document.getElementById("addTraineeButton");
         const traineeFormContainer = document.getElementById("traineeFormContainer");
         const traineeForm = document.getElementById("traineeForm");
         const traineeTableBody = document.getElementById("traineeTableBody");
         const addButton = document.getElementById("addButton");
+        const editForm = document.getElementById("editForm");
 
         addButton.addEventListener("click", function () {
-            window.location.href = "index.html"; // Redirect to the trainee portal page
+            window.location.href = "index2.html"; // Redirect to the trainee portal page
         });
 
         addTraineeButton.addEventListener("click", function () {
@@ -135,6 +169,7 @@
                 console.error("An error occurred while submitting trainee data.", error);
             }
         });
+
         function searchTrainers() {
             const searchInput = document.getElementById("searchInput");
             const searchText = searchInput.value.toLowerCase(); // Convert the search text to lowercase for case-insensitive search
@@ -154,6 +189,41 @@
             });
         }
 
+        // Add an event listener to all edit buttons with class "edit-button"
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll('.edit-button').forEach((button) => {
+                button.addEventListener('click', async (event) => {
+                    const trainerId = event.target.getAttribute('data-id');
+
+                    // Fetch trainer data by ID from your server
+                    try {
+                        const response = await fetch(`/getTrainerById/${trainerId}`);
+                        if (response.ok) {
+                            const trainerData = await response.json();
+
+                            // Populate the form fields with the existing trainer data
+                            document.getElementById('editTraineeName').value = trainerData.traineeName;
+                            document.getElementById('editTraineeContact').value = trainerData.traineeContact;
+                            document.getElementById('editTraineeAlternative').value = trainerData.traineeAlternative || "";
+                            document.getElementById('editTraineeCity').value = trainerData.traineeCity;
+                            document.getElementById('editTraineeSkills').value = trainerData.traineeSkills;
+                            document.getElementById('editTraineeLogin').value = trainerData.traineeLogin;
+                            document.getElementById('editTraineePassword').value = trainerData.traineePassword;
+                            document.getElementById('editTraineePortfolio').value = trainerData.traineePortfolio;
+                            document.getElementById('editTraineeNotes').value = trainerData.traineeNotes;
+
+                            // Display the edit form
+                            document.getElementById('editForm').style.display = 'block';
+                        } else {
+                            console.error('Error fetching trainer data:', response.statusText);
+                        }
+                    } catch (error) {
+                        console.error('An error occurred while fetching trainer data:', error);
+                    }
+                });
+            });
+        });
+
         async function loadTrainees() {
             traineeTableBody.innerHTML = "";
 
@@ -165,17 +235,17 @@
                     traineeData.forEach((trainee) => {
                         const row = document.createElement("tr");
                         row.innerHTML = `
-                    <td>${trainee.traineeName}</td>
-                    <td>${trainee.traineeContact}</td>
-                    <td>${trainee.traineeAlternative ? trainee.traineeAlternative : '-'}</td>
-                    <td>${trainee.traineeCity}</td>
-                    <td>${trainee.traineeSkills}</td>
-                    <td>${trainee.traineeLogin}</td>
-                    <td><a href="${trainee.traineePassword}" target="_blank"><i class="fa-solid tab fa-link"></i></i></a></td>
-                    <td><a href="${trainee.traineePortfolio}" target="_blank"><i class="fa-solid tab fa-arrow-up-right-from-square"></i></i></a></td>
-                    <td><a href="${trainee.traineeNotes}" target="_blank"><i class="fa-brands tab fa-google-drive"></i></a></td>
-                `;
-
+                            <td>${trainee.traineeName}</td>
+                            <td>${trainee.traineeContact}</td>
+                            <td>${trainee.traineeAlternative ? trainee.traineeAlternative : '-'}</td>
+                            <td>${trainee.traineeCity}</td>
+                            <td>${trainee.traineeSkills}</td>
+                            <td>${trainee.traineeLogin}</td>
+                            <td><a href="${trainee.traineePassword}" target="_blank"><i class="fa-solid tab fa-link"></i></i></a></td>
+                            <td><a href="${trainee.traineePortfolio}" target="_blank"><i class="fa-solid tab fa-arrow-up-right-from-square"></i></i></a></td>
+                            <td><a href="${trainee.traineeNotes}" target="_blank"><i class="fa-brands tab fa-google-drive"></i></a></td>
+                            <td><button class="edit-button" data-id="${trainee._id}">Edit</button></td>
+                        `;
                         traineeTableBody.appendChild(row);
                     });
 
@@ -188,9 +258,8 @@
                 console.error("An error occurred while loading trainees:", error);
             }
         }
-        loadTrainees();
-    </script>
 
+        loadTrainees();
     </script>
 </body>
 

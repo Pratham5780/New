@@ -459,7 +459,7 @@ button:hover{
     padding: 20px 100px;
 }
 .card {
-    border: 1px solid #003399;
+    border: 2px solid #003399;
     border-radius: 15px;
     padding: 20px;
     text-align: center;
@@ -479,4 +479,21 @@ button:hover{
 }
 .card p {
     font-size: 14px;
+}
+.footer{
+    display: flex;
+    justify-content: space-between;
+    background-color: #003399;
+    color: white;
+    font-size: 18px;
+    padding: 10px 50px;
+    margin-top: 20px;
+}
+.credits{
+    display: flex;
+    gap: 20px;
+}
+.credits>a{
+    color: white;
+    text-decoration: none;
 }

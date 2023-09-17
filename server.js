@@ -217,6 +217,24 @@ app.get("/trainees", async (req, res) => {
         res.status(500).send("An error occurred");
     }
 });
+app.patch('/updateTrainer/:id', async (req, res) => {
+    try {
+        const trainerId = req.params.id;
+        const updatedTrainerData = req.body;
+
+        const updatedTrainer = await Trainee.findByIdAndUpdate(trainerId, updatedTrainerData, { new: true });
+
+        if (!updatedTrainer) {
+            return res.status(404).send('Trainer not found');
+        }
+
+        const trainees = await Trainee.find();
+        res.status(200).json(trainees);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('An error occurred');
+    }
+});
 
 app.get("/students", async (req, res) => {
     try {
