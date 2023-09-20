@@ -52,24 +52,22 @@
                 <h2>Ticket System</h2>
             </div>
         </a>
-        <a href="issues.html">
-            <div class="card">
-                <img src="../images/6.svg" alt="Image 4">
-                <h2>Tickets</h2>
-            </div>
-        </a>
+        <div class="card">
+            <img src="../images/6.svg" alt="Image 4">
+            <h2>Tickets</h2>
+            <button onclick="checkTicketsPassword()">Need Access</button>
+        </div>
         <a href="resolve.html">
             <div class="card">
                 <img src="../images/7.svg" alt="Image 4">
                 <h2>Resolved Tickets</h2>
             </div>
         </a>
-        <a href="fees.html">
-            <div class="card">
-                <img src="../images/8.svg" alt="Image 4">
-                <h2>Fees Portal</h2>
-            </div>
-        </a>
+        <div class="card">
+            <img src="../images/8.svg" alt="Image 4">
+            <h2>Fees Portal</h2>
+            <button onclick="checkFeesPassword()">Need Access</button>
+        </div>
     </div>
     <div class="footer">
         <div class="name-digi">
@@ -82,12 +80,34 @@
     </div>
     <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
     <script>
+        const feesPassword = "digi1grow";
+        const ticketsPassword = "digi1grow";
         var typed = new Typed('#element', {
             strings: ['Management Portal!', 'Trainer\'s Portal!', 'Student\'s Portal!', 'Course\'s Portal!', 'Ticket System!', 'Fees Portal!'],
             typeSpeed: 60,
             backSpeed: 30,
             loop: true,
         });
+
+        // Function to check the password for Fees Portal
+        function checkFeesPassword() {
+            const enteredPassword = prompt("Enter Password for Fees Portal:");
+            if (enteredPassword === feesPassword) {
+                // Redirect to the Fees Portal page if the password is correct
+                window.location.href = "fees.html";
+            } else {
+                alert("Incorrect password. Access denied.");
+            }
+        }
+        function checkTicketsPassword() {
+            const enteredPassword = prompt("Enter Password for Tickets:");
+            if (enteredPassword === ticketsPassword) {
+                // Redirect to the Tickets page if the password is correct
+                window.location.href = "issues.html";
+            } else {
+                alert("Incorrect password. Access denied.");
+            }
+        }
     </script>
 </body>
 
