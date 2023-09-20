@@ -631,6 +631,29 @@ app.post('/sendEmail', (req, res) => {
 });
 });
 
+app.get('/courses', async (req, res) => {
+    try {
+        const courses = await Course.find({}, 'courseName'); // Fetch only the 'courseName' field
+        res.json(courses);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// Endpoint to get a list of instructors for a specific course
+app.get('/instructors', async (req, res) => {
+    const { course } = req.query;
+
+    try {
+        const instructors = await Course.find({ courseName: course }, 'instructorName'); // Fetch only the 'instructorName' field
+        res.json(instructors);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
