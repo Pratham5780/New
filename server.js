@@ -6,7 +6,7 @@ const pdf = require('html-pdf');
 const app = express();
 const port = 3000;
 
-const mongoURI = 'mongodb+srv://khandelwalg578:pQA4raESYbAGecNM@cluster0.y8ouhdk.mongodb.net/?retryWrites=true&w=majority';
+const mongoURI = 'mongodb+srv://dghleads:P1zWkTn0fcCUfQZn@cluster0.22l3rot.mongodb.net/?retryWrites=true&w=majority';
 const MASTER_PASSWORD = "digi1grow"; 
 
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
