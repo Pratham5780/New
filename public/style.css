@@ -121,6 +121,7 @@ table, tr, td, th{
     border-collapse: collapse;
     font-size: 14px;
     }
+tr:nth-child(even) {background-color: #d0d0d0;}
 thead{
     background: #002fa7;
     color: #fff;
